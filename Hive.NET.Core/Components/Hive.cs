@@ -5,51 +5,48 @@ namespace Hive.NET.Core.Components;
 public class Hive
 {
     private List<Bee> Swarm = new();
-    private ConcurrentDictionary<Guid, Task> Tasks = new();
+    private ConcurrentQueue<Task> Tasks = new();
 
 
-    public Hive(int amount = 3)
+    public Hive(int swarmSize = 3)
     {
-        for (int i = 0; i < amount; i++)
+        for (int i = 0; i < swarmSize; i++)
         {
             Swarm.Add(new Bee());
         }
-
-        Thread thread = new Thread(OperateHive);
-        thread.Start();
-
-        //new Timer((e) => { OperateHive(); }, null, TimeSpan.Zero, TimeSpan.FromSeconds(3));
     }
 
-    public void AddTask(Guid id, Task task)
+    public void AddTask(Task task)
     {
-        Tasks[id] = task;
+        Tasks.Enqueue(task);
+        
+        AssignTask();
     }
 
-    private void OperateHive()
+    private void AssignTaskToBee(Bee bee)
     {
-        while (true)
+        Bee.BeeFinishedWorkCallback callback = AssignTaskToBee;
+
+        if (Tasks.TryDequeue(out var task))
         {
-            if (Tasks.Count is 0)
-            {
-                Console.WriteLine("No tasks found");
-                Thread.Sleep(5000);
-                continue;
-            }
+            bee.DoWork(task, callback);
+        }
+    }
 
-            var bee = Swarm.FirstOrDefault(x => x.IsWorking == false);
-
-            if (bee is null)
-            {
-                Console.WriteLine("Waiting for free bee");
-                Thread.Sleep(1000);
-                continue;
-            }
-
-            var task = Tasks.FirstOrDefault();
-            Tasks.Remove(task.Key, out _);
-            Console.WriteLine($"Bee {bee.Id} is starting work");
-            bee.DoWork(task.Value);
+    private void AssignTask()
+    {
+        Bee.BeeFinishedWorkCallback callback = AssignTaskToBee;
+        
+        var bee = Swarm.FirstOrDefault(x => x.IsWorking == false);
+        
+        if (bee is null)
+        {
+            return;
+        }
+        
+        if (Tasks.TryDequeue(out var task))
+        {
+            bee.DoWork(task, callback);    
         }
     }
 }

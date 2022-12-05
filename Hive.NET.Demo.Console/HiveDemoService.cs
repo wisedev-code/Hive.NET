@@ -1,4 +1,5 @@
-﻿using Hive.NET.Core.Manager;
+﻿using Hive.NET.Core.Components;
+using Hive.NET.Core.Manager;
 
 namespace Hive.NET.Demo.Console;
 
@@ -13,22 +14,44 @@ public class HiveDemoService
 
     public async Task Run()
     {
-        var id = Guid.NewGuid();
-        var hiveToAdd = new Core.Components.Hive();
+        var hive = new Core.Components.Hive(2);
 
-        _manager.AddHive(id, hiveToAdd);
+        System.Console.Write("Set amount of tasks to process or leave empty to quit: ");
+        
+        while (true)
+        {
+            var input = System.Console.ReadLine();
 
+            if (string.IsNullOrEmpty(input))
+            {
+                break;
+            }
 
-        var hive = _manager.GetHive(id);
+            if (int.TryParse(input, out var amount))
+            {
+                var tasks = CreateTasks(amount);
+                
+                tasks.ForEach(x => hive.AddTask(x));
+            }
 
-        for (int i = 0; i < 20; i++)
+        }
+    }
+
+    private List<Task> CreateTasks(int amount)
+    {
+        var tasks = new List<Task>();
+
+        for (int i = 0; i < amount; i++)
         {
             var i1 = i;
-            hive.AddTask(Guid.NewGuid(), new Task(() =>
+            tasks.Add(new Task(() =>
             {
-                System.Console.WriteLine($"Task {i1}");
-                Task.Delay(4000);
+                var delay = new Random().Next(1000, 5000);
+                System.Console.WriteLine($"Task {i1} with delay {delay}");
+                Task.Delay(delay).Wait();
             }));
         }
+
+        return tasks;
     }
 }
