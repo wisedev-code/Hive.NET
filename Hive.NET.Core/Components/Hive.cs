@@ -7,7 +7,6 @@ public class Hive
     private List<Bee> Swarm = new();
     private ConcurrentQueue<Task> Tasks = new();
 
-
     public Hive(int swarmSize = 3)
     {
         for (int i = 0; i < swarmSize; i++)
@@ -20,7 +19,7 @@ public class Hive
     {
         Tasks.Enqueue(task);
         
-        AssignTask();
+        AssignTaskToRandomBee();
     }
 
     private void AssignTaskToBee(Bee bee)
@@ -33,7 +32,7 @@ public class Hive
         }
     }
 
-    private void AssignTask()
+    private void AssignTaskToRandomBee()
     {
         Bee.BeeFinishedWorkCallback callback = AssignTaskToBee;
         
@@ -46,7 +45,7 @@ public class Hive
         
         if (Tasks.TryDequeue(out var task))
         {
-            bee.DoWork(task, callback);    
+            bee.DoWork(task, callback);
         }
     }
 }
