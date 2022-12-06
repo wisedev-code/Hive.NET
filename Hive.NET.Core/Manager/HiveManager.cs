@@ -2,10 +2,18 @@
 
 namespace Hive.NET.Core.Manager;
 
-public class HiveManager : IHiveManager
+internal sealed class HiveManager : IHiveManager
 {
-    private ConcurrentDictionary<Guid, Components.Hive> HiveStorage { get; set; } = new();
+    private ConcurrentDictionary<Guid, Components.Hive> HiveStorage { get; } = new();
 
-    public void AddHive(Guid id, Components.Hive hive) => HiveStorage.TryAdd(id,hive);
-    public Components.Hive GetHive(Guid id) => HiveStorage[id];
+    private static HiveManager _instance = new();
+
+    public static HiveManager GetInstance()
+    {
+        _instance ??= new HiveManager();
+        return _instance;
+    }
+
+    public void AddHive(Guid id, Components.Hive hive) => _instance.HiveStorage.TryAdd(id,hive);
+    public Components.Hive GetHive(Guid id) => _instance.HiveStorage[id];
 }

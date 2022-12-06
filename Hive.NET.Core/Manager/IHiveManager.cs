@@ -2,6 +2,6 @@
 
 public interface IHiveManager
 {
-    void AddHive(Guid id, Components.Hive hive);
-    Components.Hive GetHive(Guid id);
+    public void AddHive(Guid id, Components.Hive hive);
+    public Components.Hive GetHive(Guid id);
 }

@@ -4,11 +4,15 @@ namespace Hive.NET.Core.Components;
 
 public class Hive
 {
+    public Guid Id { get; }
+    
     private List<Bee> Swarm = new();
     private ConcurrentQueue<Task> Tasks = new();
 
     public Hive(int swarmSize = 3)
     {
+        Id = Guid.NewGuid();
+        
         for (int i = 0; i < swarmSize; i++)
         {
             Swarm.Add(new Bee());

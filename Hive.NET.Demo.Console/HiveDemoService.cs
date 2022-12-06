@@ -1,4 +1,4 @@
-﻿using Hive.NET.Core.Components;
+﻿using Hive.NET.Core.Factory;
 using Hive.NET.Core.Manager;
 
 namespace Hive.NET.Demo.Console;
@@ -12,10 +12,13 @@ public class HiveDemoService
         _manager = manager;
     }
 
-    public async Task Run()
+    public void Run()
     {
-        var hive = new Core.Components.Hive(2);
+        var hiveId = HiveFactory.CreateHive(2);
 
+        var hive = _manager.GetHive(hiveId);
+        
+        
         System.Console.Write("Set amount of tasks to process or leave empty to quit: ");
         
         while (true)
@@ -27,17 +30,19 @@ public class HiveDemoService
                 break;
             }
 
-            if (int.TryParse(input, out var amount))
+            if (!int.TryParse(input, out var amount))
             {
-                var tasks = CreateTasks(amount);
-                
-                tasks.ForEach(x => hive.AddTask(x));
+                continue;;
             }
+
+            var tasks = CreateTasks(amount);
+                
+            tasks.ForEach(x => hive.AddTask(x));
 
         }
     }
 
-    private List<Task> CreateTasks(int amount)
+    private static List<Task> CreateTasks(int amount)
     {
         var tasks = new List<Task>();
 
