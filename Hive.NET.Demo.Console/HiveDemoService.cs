@@ -37,7 +37,10 @@ public class HiveDemoService
 
             var tasks = CreateTasks(amount);
                 
-            tasks.ForEach(x => hive.AddTask(x));
+            tasks.ForEach(x => hive.AddTask(x, () =>
+            {
+                System.Console.WriteLine("Finished work!");
+            }));
 
         }
     }
