@@ -7,7 +7,7 @@ public class Hive
     public Guid Id { get; }
     
     private List<Bee> Swarm = new();
-    private ConcurrentQueue<BeeWork> Tasks = new();
+    private ConcurrentQueue<BeeWorkItem> Tasks = new();
 
     public Hive(int swarmSize = 3)
     {
@@ -19,7 +19,7 @@ public class Hive
         }
     }
 
-    public void AddTask(BeeWork task)
+    public void AddTask(BeeWorkItem task)
     {
         Tasks.Enqueue(task);
         
