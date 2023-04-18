@@ -11,16 +11,25 @@ internal class Bee
         IsWorking = false;
     }
 
-    public async Task DoWork(Task unitOfWork, BeeFinishedWorkCallback beeCallback)
+    public async Task DoWork(BeeWorkItem unitOfWork, 
+        BeeFinishedWorkCallback beeCallback)
     {
-        IsWorking = true;
-        
-        unitOfWork.Start();
-        await unitOfWork;
-        
-        IsWorking = false;
+        try
+        {
+            IsWorking = true;
 
-        beeCallback(this);
+            unitOfWork.task.Start();
+            await unitOfWork.task;
+
+            IsWorking = false;
+
+            beeCallback(this);
+            unitOfWork.onSuccess?.Invoke();
+        }
+        catch (Exception ex)
+        {
+            unitOfWork.onFailure?.Invoke(ex);
+        }
     }
 
     public delegate void BeeFinishedWorkCallback(Bee bee);

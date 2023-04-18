@@ -1,4 +1,5 @@
-﻿using Hive.NET.Core.Factory;
+﻿using Hive.NET.Core.Components;
+using Hive.NET.Core.Factory;
 using Hive.NET.Core.Manager;
 
 namespace Hive.NET.Demo.Console;
@@ -36,8 +37,8 @@ public class HiveDemoService
             }
 
             var tasks = CreateTasks(amount);
-                
-            tasks.ForEach(x => hive.AddTask(x));
+
+            tasks.ForEach(x => hive.AddTask(new BeeWorkItem(x, () => System.Console.WriteLine("Finished!"))));
 
         }
     }
