@@ -25,7 +25,7 @@ internal class Bee
 
             beeCallback(this);
             //todo refactor to use internal logging to enable log level filtering
-            Console.WriteLine("{0:MM/dd/yyyy}: bzzz, nothing happened", DateTime.UtcNow);
+            Console.WriteLine("{0:MM/dd/yyyy}: bzzzt, nothing happened", DateTime.UtcNow);
             unitOfWork.onSuccess?.Invoke();
         }
         catch (Exception ex)
