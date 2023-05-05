@@ -11,7 +11,7 @@ internal class Bee
         IsWorking = false;
     }
 
-    public async Task DoWork(BeeWorkItem unitOfWork, 
+    public async Task<bool> DoWork(BeeWorkItem unitOfWork, 
         BeeFinishedWorkCallback beeCallback)
     {
         try
@@ -25,14 +25,16 @@ internal class Bee
 
             beeCallback(this);
             //todo refactor to use internal logging to enable log level filtering
-            Console.WriteLine("{0:MM/dd/yyyy}: bzzzt, nothing happened", DateTime.UtcNow);
+            Console.WriteLine("{0:G}: bzzzt, nothing happened", DateTime.UtcNow);
             unitOfWork.onSuccess?.Invoke();
+            return true;
         }
         catch (Exception ex)
         {
             unitOfWork.onFailure?.Invoke(ex);
+            return false;
         }
     }
 
-    public delegate void BeeFinishedWorkCallback(Bee bee);
+    public delegate Task BeeFinishedWorkCallback(Bee bee);
 }

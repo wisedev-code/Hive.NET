@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using Hive.NET.Core.Models.Enums;
 
 namespace Hive.NET.Core.Components;
 
@@ -8,6 +9,7 @@ public class Hive
     
     private List<Bee> Swarm = new();
     private ConcurrentQueue<BeeWorkItem> Tasks = new();
+    private ConcurrentDictionary<Guid, BeeWorkItemStatus> Statuses = new(); 
 
     public Hive(int swarmSize = 3)
     {
@@ -19,24 +21,61 @@ public class Hive
         }
     }
 
-    public void AddTask(BeeWorkItem task)
+    public Guid AddTask(BeeWorkItem task)
     {
+        var taskId = Guid.NewGuid();
+        Statuses.TryAdd(taskId, BeeWorkItemStatus.Waiting);
+        task.Id = taskId;
         Tasks.Enqueue(task);
-        
         AssignTaskToRandomBee();
+        
+        return taskId;
     }
 
-    private void AssignTaskToBee(Bee bee)
+    public BeeWorkItemStatus GetWorkItemStatus(Guid id)
+    {
+        if (!Statuses.ContainsKey(id))
+        {
+            return BeeWorkItemStatus.NotExist;
+        }
+
+        return Statuses[id];
+    }
+    
+    public BeeWorkItemStatus TryRemoveTask(Guid id)
+    {
+        if (!Statuses.ContainsKey(id))
+        {
+            return BeeWorkItemStatus.NotExist;
+        }
+
+        if (Statuses[id] == BeeWorkItemStatus.Running)
+        {
+            //todo Log error that cannot remove running Task
+            return BeeWorkItemStatus.Running;
+        }
+
+        return Statuses[id] = BeeWorkItemStatus.Removed;
+    }
+
+    private async Task AssignTaskToBee(Bee bee)
     {
         Bee.BeeFinishedWorkCallback callback = AssignTaskToBee;
 
         if (Tasks.TryDequeue(out var task))
         {
-            bee.DoWork(task, callback);
+            var state = GetWorkItemStatus(task.Id);
+            if (state == BeeWorkItemStatus.Removed)
+            {
+                return;
+            }
+            
+            Statuses[Id] = BeeWorkItemStatus.Running;
+            await InvokeTaskOnBee(bee, task, callback);
         }
     }
 
-    private void AssignTaskToRandomBee()
+    private async Task AssignTaskToRandomBee()
     {
         Bee.BeeFinishedWorkCallback callback = AssignTaskToBee;
         
@@ -49,7 +88,20 @@ public class Hive
         
         if (Tasks.TryDequeue(out var task))
         {
-            bee.DoWork(task, callback);
+            var state = GetWorkItemStatus(task.Id);
+            if (state == BeeWorkItemStatus.Removed)
+            {
+                return;
+            }
+            
+            await InvokeTaskOnBee(bee, task, callback);
         }
+    }
+
+
+    private async Task InvokeTaskOnBee(Bee bee, BeeWorkItem workItem, Bee.BeeFinishedWorkCallback callback)
+    {
+        var success = await bee.DoWork(workItem, callback);
+        Statuses[workItem.Id] = success ? BeeWorkItemStatus.Completed : BeeWorkItemStatus.Failed;
     }
 }
