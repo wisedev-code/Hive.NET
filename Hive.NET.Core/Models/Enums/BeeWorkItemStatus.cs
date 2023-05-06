@@ -2,10 +2,10 @@
 
 public enum BeeWorkItemStatus
 {
-    Waiting,
-    Running,
-    Failed,
-    Completed,
-    Removed,
-    NotExist,
+    Waiting = 0,
+    Running = 1,
+    Failed = 2,
+    Completed = 3,
+    Removed = 4,
+    NotExist = 5,
 }
