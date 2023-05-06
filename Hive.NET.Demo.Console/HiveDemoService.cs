@@ -39,7 +39,6 @@ public class HiveDemoService
             var tasks = CreateTasks(amount);
 
             tasks.ForEach(x => hive.AddTask(new BeeWorkItem(x, () => System.Console.WriteLine("Finished!"))));
-
         }
     }
 
@@ -53,8 +52,8 @@ public class HiveDemoService
             tasks.Add(new Task(() =>
             {
                 var delay = new Random().Next(1000, 5000);
-                System.Console.WriteLine($"Task {i1} with delay {delay}");
                 Task.Delay(delay).Wait();
+                System.Console.WriteLine($"Task {i1} with delay {delay}");
             }));
         }
 

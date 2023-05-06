@@ -14,4 +14,5 @@ public class BeeWorkItem
     public Task task { get; }
     public Action onSuccess { get; }
     public Action<Exception> onFailure { get; }
+    public Guid Id { get; set; }
 }
