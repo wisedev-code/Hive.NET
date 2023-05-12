@@ -84,3 +84,10 @@ We are not there yet :)
 <img  height="200" width="200" style="padding: 25pt" src="https://cdn-icons-png.flaticon.com/512/5229/5229377.png"/>
 
 ## Why the name Hive?
+    
+<img align="right" height="190" width="190" style="padding: 25pt" src="https://pngimg.com/uploads/bee/bee_PNG74646.png"/>
+    
+<p align="left">    
+The journey of naming our animal reference libraries began with "Raven.NET" and now continues with "Hive.NET". While "Raven.NET" embodies the observer-like qualities of a raven, "Hive.NET" draws inspiration from the hardworking nature of bees. In developing Hive.NET, we aimed to create a library that embraces the diligent and collaborative nature of bees within a hive. Bees work together, observing their environment, coordinating their efforts, and executing tasks harmoniously. Similarly, Hive.NET enables you to distribute and manage tasks among a colony of bees (workers) in your application, ensuring efficient and parallel execution.
+The choice of "Hive.NET" reflects the library's emphasis on observation and coordination. Bees are known for their ability to observe their surroundings keenly, communicate with one another, and work together towards a common goal. Hive.NET provides a framework that allows you to observe and coordinate the execution of tasks, optimizing performance and responsiveness within your application.
+</p>
