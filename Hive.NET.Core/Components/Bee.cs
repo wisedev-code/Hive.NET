@@ -1,12 +1,20 @@
-﻿namespace Hive.NET.Core.Components;
+﻿using Hive.NET.Core.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+namespace Hive.NET.Core.Components;
 
 internal class Bee
 {
+    private readonly ILogger<Bee> _logger;
     public Guid Id { get;}
     public bool IsWorking { get; private set; }
 
     public Bee()
     {
+        var options = ServiceLocator.GetService<IOptions<HiveSettings>>();
+        _logger = BoostrapExtensions.BuildLogger<Bee>(options.Value.LogLevel);
+        
         Id = Guid.NewGuid();
         IsWorking = false;
     }
@@ -25,12 +33,13 @@ internal class Bee
 
             beeCallback(this);
             //todo refactor to use internal logging to enable log level filtering
-            Console.WriteLine("{0:G}: bzzzt, nothing happened", DateTime.UtcNow);
+            _logger.LogDebug("{0:G}: bzzzt, nothing happened", DateTime.UtcNow);
             unitOfWork.onSuccess?.Invoke();
             return true;
         }
         catch (Exception ex)
         {
+            _logger.LogDebug($"Bee {Id} failed working on task {unitOfWork.Id} with exception: ({ex})");
             unitOfWork.onFailure?.Invoke(ex);
             return false;
         }

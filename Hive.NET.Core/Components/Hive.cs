@@ -1,10 +1,14 @@
 ﻿using System.Collections.Concurrent;
+using Hive.NET.Core.Configuration;
 using Hive.NET.Core.Models.Enums;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Hive.NET.Core.Components;
 
 public class Hive
 {
+    private ILogger<Hive> _logger;
     public Guid Id { get; }
     
     private List<Bee> Swarm = new();
@@ -13,6 +17,8 @@ public class Hive
 
     public Hive(int swarmSize = 3)
     {
+        var options = ServiceLocator.GetService<IOptions<HiveSettings>>();
+        _logger = BoostrapExtensions.BuildLogger<Hive>(options.Value.LogLevel);
         Id = Guid.NewGuid();
         
         for (int i = 0; i < swarmSize; i++)
@@ -55,6 +61,7 @@ public class Hive
             return BeeWorkItemStatus.Running;
         }
 
+        _logger.LogDebug($"Task {id} is removed from queue");
         return Statuses[id] = BeeWorkItemStatus.Removed;
     }
 
@@ -86,6 +93,7 @@ public class Hive
             return;
         }
         
+        _logger.LogDebug($"Task assigned to bee: {bee.Id}");
         if (Tasks.TryDequeue(out var task))
         {
             var state = GetWorkItemStatus(task.Id);
@@ -101,6 +109,7 @@ public class Hive
 
     private async Task InvokeTaskOnBee(Bee bee, BeeWorkItem workItem, Bee.BeeFinishedWorkCallback callback)
     {
+        _logger.LogInformation($"Bee {bee.Id} will perform task {workItem.Id}");
         var success = await bee.DoWork(workItem, callback);
         Statuses[workItem.Id] = success ? BeeWorkItemStatus.Completed : BeeWorkItemStatus.Failed;
     }
