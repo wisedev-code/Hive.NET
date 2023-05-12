@@ -75,7 +75,7 @@ By using the BeeWorkItem approach, you can add tasks with their corresponding su
 
 With this approach now when we start our demo app, with swarn size 2 and simple delaying tasks, thats how result will look like (we provided 3 tasks)
 
-
+![image](https://github.com/wisedev-code/Hive.NET/assets/111281468/7ac1f705-6b82-49f0-b789-2897f80f0151)
 
 ## Docs
 
