@@ -13,8 +13,9 @@ public static class HiveBootstrapper
         services.Configure<HiveSettings>(configuration.GetSection(HiveSectionName));
     }
 
-    public static void UseHive(this IServiceProvider serviceProvider)
+    public static IServiceProvider UseHive(this IServiceProvider serviceProvider)
     {
         ServiceLocator.SetServiceProvider(serviceProvider);
+        return serviceProvider;
     }
 }
