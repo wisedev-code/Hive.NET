@@ -10,21 +10,27 @@ namespace Hive.NET.Demo.Console
         static void Main(string[] args)
         {
             var builder = new ConfigurationBuilder();
+            BuildConfiguration(builder);
             IConfiguration configuration = builder.Build();
             
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((_, services) =>
                 {
-                    services.ConfigureHive();
+                    services.ConfigureHive(configuration);
                 }).Build();
+            
+            host.Services.UseHive();
             
             var service = ActivatorUtilities.CreateInstance<HiveDemoService>(host.Services);
             service.Run();
-            
-            // CallBackTest callBackTest = new CallBackTest();
-            // callBackTest.Test();
-            // System.Console.ReadLine();
         }
+        
+        static void BuildConfiguration(IConfigurationBuilder builder)
+        {
+            builder.SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables();
+        } 
     }
     
     public delegate void BeeReturnedCallback(string result);

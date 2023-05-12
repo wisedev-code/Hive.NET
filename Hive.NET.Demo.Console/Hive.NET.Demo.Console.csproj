@@ -17,4 +17,11 @@
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Remove="appsettings.json" />
+        <Content Include="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>

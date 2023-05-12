@@ -1,16 +1,20 @@
 ﻿using Hive.NET.Core.Components;
 using Hive.NET.Core.Factory;
 using Hive.NET.Core.Manager;
+using Microsoft.Extensions.Logging;
 
 namespace Hive.NET.Demo.Console;
 
 public class HiveDemoService
 {
     private readonly IHiveManager _manager;
+    private readonly ILogger<HiveDemoService> _logger;
 
-    public HiveDemoService(IHiveManager manager)
+    public HiveDemoService(IHiveManager manager, 
+        ILogger<HiveDemoService> logger)
     {
         _manager = manager;
+        _logger = logger;
     }
 
     public void Run()
@@ -19,13 +23,11 @@ public class HiveDemoService
 
         var hive = _manager.GetHive(hiveId);
         
-        
-        System.Console.Write("Set amount of tasks to process or leave empty to quit: ");
-        
+        _logger.LogInformation("Set amount of tasks to process or leave empty to quit: ");
+       
         while (true)
         {
             var input = System.Console.ReadLine();
-
             if (string.IsNullOrEmpty(input))
             {
                 break;
