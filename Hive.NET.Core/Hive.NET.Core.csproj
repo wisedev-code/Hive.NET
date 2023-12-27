@@ -9,6 +9,7 @@
 
     <PropertyGroup>
         <PackageId>Hive.NET.Core</PackageId>
+        <Version>0.0.1</Version>
         <Authors>Wisedev, Piotr Świerad</Authors>
         <Company>Wisedev</Company>
         <Description>Scalable task management in .NET with animal reference.</Description>
