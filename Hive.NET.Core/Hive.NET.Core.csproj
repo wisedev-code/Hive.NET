@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <PackageId>Hive.NET.Core</PackageId>
+        <PackageId>HiveNET.Core</PackageId>
         <Version>0.0.2</Version>
         <Authors>Wisedev, Piotr Świerad</Authors>
         <Company>Wisedev</Company>
