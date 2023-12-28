@@ -1,5 +1,7 @@
 ﻿using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Hive.NET.Tests")]
 namespace Hive.NET.Core.Manager;
 
 internal sealed class HiveManager : IHiveManager

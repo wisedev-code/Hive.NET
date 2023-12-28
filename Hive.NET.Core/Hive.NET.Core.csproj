@@ -19,6 +19,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>
+    
 
     <ItemGroup>
       <None Include="..\icon.png" Pack="true" PackagePath="\" />
