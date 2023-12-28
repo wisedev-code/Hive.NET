@@ -52,7 +52,7 @@ jobs:
         run: nuget setapikey ${{ secrets.NUGET_SECRET }}
 
       - name: Publish NuGet
-        run: dotnet nuget push "*.nupkg" -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_SECRET }}
+        run: dotnet nuget push "*.nupkg" -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_SECRET }}
 
 
   
