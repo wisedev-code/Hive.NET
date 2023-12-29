@@ -18,11 +18,11 @@ Hive.NET provides a seamless and parallel execution environment for your tasks, 
 
 ## Installation
 To make use of Hive.NET library and its most important features you need to install nuget package, you can do this with *dotnet* command like this:
-> dotnet add package Hive.NET
+> dotnet add package HiveNET.Core
 
 or via nuget package manager console:
 
-> Install-Package Hive.NET
+> Install-Package HiveNET.Core
 
 To check newest updates and additional information please check direct link:
 https://www.nuget.org/packages/Hive.NET
