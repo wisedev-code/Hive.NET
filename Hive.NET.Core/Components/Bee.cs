@@ -14,12 +14,12 @@ internal class Bee
     {
         var options = ServiceLocator.GetService<IOptions<HiveSettings>>();
         _logger = BoostrapExtensions.BuildLogger<Bee>(options.Value.LogLevel);
-        
+
         Id = Guid.NewGuid();
         IsWorking = false;
     }
 
-    public async Task<bool> DoWork(BeeWorkItem unitOfWork, 
+    public async Task<bool> DoWork(BeeWorkItem unitOfWork,
         BeeFinishedWorkCallback beeCallback)
     {
         try
@@ -33,8 +33,12 @@ internal class Bee
 
             beeCallback(this);
             //todo refactor to use internal logging to enable log level filtering
-            _logger.LogDebug("{0:G}: bzzzt, nothing happened", DateTime.UtcNow);
+            //_logger.LogDebug("{0:G}: bzzzt, nothing happened", DateTime.UtcNow);
             unitOfWork.onSuccess?.Invoke();
+
+            if (unitOfWork.NextTask is not null)
+                await DoWork(unitOfWork.NextTask, beeCallback);
+
             return true;
         }
         catch (Exception ex)

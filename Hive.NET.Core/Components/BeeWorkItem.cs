@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-
-namespace Hive.NET.Core.Components;
+﻿namespace Hive.NET.Core.Components;
 
 public class BeeWorkItem
 {
@@ -15,4 +13,9 @@ public class BeeWorkItem
     public Action onSuccess { get; }
     public Action<Exception> onFailure { get; }
     public Guid Id { get; set; }
+
+    public BeeWorkItem NextTask { get; private set; }
+
+    public void AddNextTask(BeeWorkItem nextTask)
+        => NextTask = nextTask;
 }
