@@ -1,4 +1,6 @@
-﻿namespace Hive.NET.Core.Manager;
+﻿using System;
+
+namespace Hive.NET.Core.Manager;
 
 public interface IHiveManager
 {

@@ -1,4 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Bogus;
 using Hive.NET.Core.Configuration;
 using Hive.NET.Core.Models.Enums;
 using Microsoft.Extensions.Logging;
@@ -8,15 +13,21 @@ namespace Hive.NET.Core.Components;
 
 public class Hive
 {
+    private string _name;
     private ILogger<Hive> _logger;
     public Guid Id { get; }
     
     private List<Bee> Swarm = new();
     private ConcurrentQueue<BeeWorkItem> Tasks = new();
-    private ConcurrentDictionary<Guid, BeeWorkItemStatus> Statuses = new(); 
+    private ConcurrentDictionary<Guid, WorkItemStatus> Statuses = new(); 
 
-    public Hive(int swarmSize = 3)
+    public Hive(int swarmSize = 3, string? name = null)
     {
+        if (name == null)
+        {
+            _name = Guid.NewGuid().ToString(); //todo create fun animal names by default.
+        }
+        
         var options = ServiceLocator.GetService<IOptions<HiveSettings>>();
         _logger = BoostrapExtensions.BuildLogger<Hive>(options.Value.LogLevel);
         Id = Guid.NewGuid();
@@ -30,7 +41,7 @@ public class Hive
     public Guid AddTask(BeeWorkItem task)
     {
         var taskId = Guid.NewGuid();
-        Statuses.TryAdd(taskId, BeeWorkItemStatus.Waiting);
+        Statuses.TryAdd(taskId, WorkItemStatus.Waiting);
         task.Id = taskId;
         Tasks.Enqueue(task);
         AssignTaskToRandomBee();
@@ -38,31 +49,31 @@ public class Hive
         return taskId;
     }
 
-    public BeeWorkItemStatus GetWorkItemStatus(Guid id)
+    public WorkItemStatus GetWorkItemStatus(Guid id)
     {
         if (!Statuses.ContainsKey(id))
         {
-            return BeeWorkItemStatus.NotExist;
+            return WorkItemStatus.NotExist;
         }
 
         return Statuses[id];
     }
     
-    public BeeWorkItemStatus TryRemoveTask(Guid id)
+    public WorkItemStatus WorkItemStatusTryRemoveTask(Guid id)
     {
         if (!Statuses.ContainsKey(id))
         {
-            return BeeWorkItemStatus.NotExist;
+            return WorkItemStatus.NotExist;
         }
 
-        if (Statuses[id] == BeeWorkItemStatus.Running)
+        if (Statuses[id] == WorkItemStatus.Running)
         {
             //todo Log error that cannot remove running Task
-            return BeeWorkItemStatus.Running;
+            return WorkItemStatus.Running;
         }
 
         _logger.LogDebug($"Task {id} is removed from queue");
-        return Statuses[id] = BeeWorkItemStatus.Removed;
+        return Statuses[id] = WorkItemStatus.Removed;
     }
 
     private async Task AssignTaskToBee(Bee bee)
@@ -72,12 +83,12 @@ public class Hive
         if (Tasks.TryDequeue(out var task))
         {
             var state = GetWorkItemStatus(task.Id);
-            if (state == BeeWorkItemStatus.Removed)
+            if (state == WorkItemStatus.Removed)
             {
                 return;
             }
             
-            Statuses[Id] = BeeWorkItemStatus.Running;
+            Statuses[Id] = WorkItemStatus.Running;
             await InvokeTaskOnBee(bee, task, callback);
         }
     }
@@ -97,7 +108,7 @@ public class Hive
         if (Tasks.TryDequeue(out var task))
         {
             var state = GetWorkItemStatus(task.Id);
-            if (state == BeeWorkItemStatus.Removed)
+            if (state == WorkItemStatus.Removed)
             {
                 return;
             }
@@ -111,6 +122,6 @@ public class Hive
     {
         _logger.LogInformation($"Bee {bee.Id} will perform task {workItem.Id}");
         var success = await bee.DoWork(workItem, callback);
-        Statuses[workItem.Id] = success ? BeeWorkItemStatus.Completed : BeeWorkItemStatus.Failed;
+        Statuses[workItem.Id] = success ? WorkItemStatus.Completed : WorkItemStatus.Failed;
     }
 }

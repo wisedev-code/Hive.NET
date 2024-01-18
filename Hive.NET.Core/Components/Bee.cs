@@ -1,4 +1,6 @@
-﻿using Hive.NET.Core.Configuration;
+﻿using System;
+using System.Threading.Tasks;
+using Hive.NET.Core.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

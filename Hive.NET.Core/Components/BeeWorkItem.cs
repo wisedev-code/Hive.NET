@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System;
+using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
 
 namespace Hive.NET.Core.Components;
 
