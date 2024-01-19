@@ -40,7 +40,7 @@ public class HiveDemoService
 
             var tasks = CreateTasks(amount);
 
-            tasks.ForEach(x => hive.AddTask(new BeeWorkItem(x, () => System.Console.WriteLine("Finished!"))));
+            tasks.ForEach(x => hive.AddTask(new BeeWorkItem(x, string.Empty, () => System.Console.WriteLine("Finished!"))));
         }
     }
 

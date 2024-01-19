@@ -14,7 +14,7 @@ internal sealed class HiveManager : IHiveManager
 
     private static HiveManager _instance = new();
 
-    public static HiveManager GetInstance()
+    public static IHiveManager GetInstance()
     {
         _instance ??= new HiveManager();
         return _instance;
@@ -22,17 +22,21 @@ internal sealed class HiveManager : IHiveManager
 
     public void AddHive(Guid id, Components.Hive hive) => _instance.HiveStorage.TryAdd(id,hive);
     public Components.Hive GetHive(Guid id) => _instance.HiveStorage[id];
-    public List<HiveDto> GetHives()
+
+    
+    // ***Internals
+    List<HiveDto> IHiveManager.GetHives()
     {
-        return HiveStorage.Values.Select(x => new HiveDto
-        {
-            Id = x.Id,
-            Name = x.Name,
-            Bees = x.Swarm.Select(x => new BeeDto
-            {
-                Id = x.Id,
-                IsWorking = x.IsWorking
-            }).ToList()
-        }).ToList();
+        return HiveStorage.Values.Select(hive => hive.MapToDto()).ToList();
+    }
+    
+    HiveDetailsDto IHiveManager.GetHiveDetails(Guid id)
+    {
+        return HiveStorage[id].MapToDetailsDto();
+    }
+
+    List<BeeErrorDto> IHiveManager.GetHiveRegisteredErrors(Guid id)
+    {
+        return HiveStorage[id].MapToErrorsDto();
     }
 }

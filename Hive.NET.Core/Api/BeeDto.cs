@@ -2,7 +2,7 @@
 
 namespace Hive.NET.Core.Api;
 
-public class BeeDto
+internal class BeeDto
 {
     public Guid Id { get; set; }
     public bool IsWorking { get; set; }

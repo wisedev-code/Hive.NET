@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Hive.NET.Core.Configuration;
@@ -22,7 +23,7 @@ namespace Hive.NET.Core.Api
                     builder.WebHost.UseUrls("https://*:7007");
 
                     var app = builder.Build();
-                    app.MapGet("/hives", Get);
+                    app.MapGet("/hives", GetHives);
                     app.Run();
                 }).Start();
 
@@ -34,8 +35,13 @@ namespace Hive.NET.Core.Api
             return Task.CompletedTask;
         }
         
+        private IResult GetHives()
+        {
+            var hiveManager = HiveManager.GetInstance();
+            return Results.Ok(hiveManager.GetHives());
+        }
         
-        private IResult Get()
+        private IResult GetHive([FromQuery] Guid id)
         {
             var hiveManager = HiveManager.GetInstance();
             return Results.Ok(hiveManager.GetHives());
