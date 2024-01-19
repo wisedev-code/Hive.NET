@@ -13,11 +13,10 @@ namespace Hive.NET.Core.Components;
 
 public class Hive
 {
-    private string _name;
     private ILogger<Hive> _logger;
     public Guid Id { get; }
-    
-    private List<Bee> Swarm = new();
+    internal string Name;
+    internal List<Bee> Swarm = new();
     private ConcurrentQueue<BeeWorkItem> Tasks = new();
     private ConcurrentDictionary<Guid, WorkItemStatus> Statuses = new(); 
 
@@ -25,7 +24,7 @@ public class Hive
     {
         if (name == null)
         {
-            _name = Guid.NewGuid().ToString(); //todo create fun animal names by default.
+            Name = Guid.NewGuid().ToString(); //todo create fun animal names by default.
         }
         
         var options = ServiceLocator.GetService<IOptions<HiveSettings>>();

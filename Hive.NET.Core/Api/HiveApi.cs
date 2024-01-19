@@ -1,8 +1,12 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Hive.NET.Core.Configuration;
+using Hive.NET.Core.Manager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Hive.NET.Core.Api
@@ -18,9 +22,7 @@ namespace Hive.NET.Core.Api
                     builder.WebHost.UseUrls("https://*:7007");
 
                     var app = builder.Build();
-                    app.MapGet("/analytics", Get);
-                    
-                    app.UseSwagger();
+                    app.MapGet("/hives", Get);
                     app.Run();
                 }).Start();
 
@@ -32,9 +34,11 @@ namespace Hive.NET.Core.Api
             return Task.CompletedTask;
         }
         
+        
         private IResult Get()
         {
-            return Results.Ok();
+            var hiveManager = HiveManager.GetInstance();
+            return Results.Ok(hiveManager.GetHives());
         }
     }
 }

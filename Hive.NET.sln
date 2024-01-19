@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# 
+#
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Core", "Hive.NET.Core\Hive.NET.Core.csproj", "{C46DC3D0-ECA6-43C9-91EF-CEF484B515B7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Demo.Console", "Hive.NET.Demo.Console\Hive.NET.Demo.Console.csproj", "{E2F91C61-B769-4601-BD98-0CDF734403F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Tests", "Hive.NET.Tests\Hive.NET.Tests.csproj", "{7A6FA868-3C6C-4D32-8833-26099BB115E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{6EC97B98-F87B-4087-96A6-F4EFA2F1EE2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,5 +27,9 @@ Global
 		{7A6FA868-3C6C-4D32-8833-26099BB115E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A6FA868-3C6C-4D32-8833-26099BB115E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A6FA868-3C6C-4D32-8833-26099BB115E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EC97B98-F87B-4087-96A6-F4EFA2F1EE2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EC97B98-F87B-4087-96A6-F4EFA2F1EE2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EC97B98-F87B-4087-96A6-F4EFA2F1EE2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EC97B98-F87B-4087-96A6-F4EFA2F1EE2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
