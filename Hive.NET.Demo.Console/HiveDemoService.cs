@@ -20,7 +20,6 @@ public class HiveDemoService
     public void Run()
     {
         var hiveId = HiveFactory.CreateHive(2);
-
         var hive = _manager.GetHive(hiveId);
         
         _logger.LogInformation("Set amount of tasks to process or leave empty to quit: ");

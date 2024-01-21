@@ -24,6 +24,9 @@ namespace Hive.NET.Core.Api
 
                     var app = builder.Build();
                     app.MapGet("/hives", GetHives);
+                    app.MapGet("/hives/{id:guid}", GetHive);
+                    app.MapGet("/hives/{id:guid}/issues", GetHiveIssues);
+
                     app.Run();
                 }).Start();
 
@@ -41,10 +44,16 @@ namespace Hive.NET.Core.Api
             return Results.Ok(hiveManager.GetHives());
         }
         
-        private IResult GetHive([FromQuery] Guid id)
+        private IResult GetHive(Guid id)
         {
             var hiveManager = HiveManager.GetInstance();
-            return Results.Ok(hiveManager.GetHives());
+            return Results.Ok(hiveManager.GetHiveDetails(id));
+        }
+        
+        private IResult GetHiveIssues(Guid id)
+        {
+            var hiveManager = HiveManager.GetInstance();
+            return Results.Ok(hiveManager.GetHiveRegisteredErrors(id));
         }
     }
 }

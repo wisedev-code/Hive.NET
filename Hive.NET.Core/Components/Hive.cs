@@ -19,6 +19,7 @@ public class Hive
     private string _name;
     private List<Bee> Swarm = new();
     private ConcurrentQueue<BeeWorkItem> Tasks = new();
+    private List<BeeWorkItem> Items = new();
     private ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt)> Statuses = new(); 
 
     public Hive(int swarmSize = 3, string? name = null)
@@ -44,6 +45,7 @@ public class Hive
         Statuses.TryAdd(taskId, (WorkItemStatus.Waiting, DateTime.UtcNow));
         task.Id = taskId;
         Tasks.Enqueue(task);
+        Items.Add(task);
         AssignTaskToRandomBee();
         
         return taskId;
@@ -145,7 +147,7 @@ public class Hive
         {
             Id = Id,
             Name = _name,
-            WorkItems = Tasks.ToList().Select(workItem =>
+            WorkItems = Items.ToList().Select(workItem =>
                 new BeeWorkItemDto()
                 {
                     Id = workItem.Id,

@@ -7,7 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Demo.Console", "Hi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Tests", "Hive.NET.Tests\Hive.NET.Tests.csproj", "{7A6FA868-3C6C-4D32-8833-26099BB115E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{6EC97B98-F87B-4087-96A6-F4EFA2F1EE2E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{0EFFF39D-BB53-4988-867F-C1C33D1DAD1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Persistance", "Hive.NET.Persistance\Hive.NET.Persistance.csproj", "{F497C727-9538-4BF0-891B-48A22967A0C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,5 +33,13 @@ Global
 		{6EC97B98-F87B-4087-96A6-F4EFA2F1EE2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EC97B98-F87B-4087-96A6-F4EFA2F1EE2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EC97B98-F87B-4087-96A6-F4EFA2F1EE2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EFFF39D-BB53-4988-867F-C1C33D1DAD1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EFFF39D-BB53-4988-867F-C1C33D1DAD1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EFFF39D-BB53-4988-867F-C1C33D1DAD1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EFFF39D-BB53-4988-867F-C1C33D1DAD1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F497C727-9538-4BF0-891B-48A22967A0C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F497C727-9538-4BF0-891B-48A22967A0C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F497C727-9538-4BF0-891B-48A22967A0C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F497C727-9538-4BF0-891B-48A22967A0C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
