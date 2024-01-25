@@ -11,8 +11,8 @@ internal class Bee
 {
     private readonly ILogger<Bee> _logger;
     internal List<BeeError> RegisteredErrors = new();
-    public Guid Id { get;}
-    public bool IsWorking { get; private set; }
+    public Guid Id { get; set; }
+    public bool IsWorking { get; set; }
 
     public Bee()
     {

@@ -1,4 +1,6 @@
-﻿using Hive.NET.Core.Configuration.Storage;
+﻿using Hive.NET.Core.Api;
+using Hive.NET.Core.Configuration.Storage;
+using Hive.NET.Core.Extensions;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -20,7 +22,7 @@ public class MongoHiveStorageProvider : IHiveStorageProvider
     public void UpsertHive(Guid id, Core.Components.Hive? hive)
     {
         var filter = Builders<HiveEntity>.Filter.Eq(entity => entity.Id, id);
-        var update = Builders<HiveEntity>.Update.Set(entity => entity.Hive, hive).SetOnInsert(entity => entity.Id, id);
+        var update = Builders<HiveEntity>.Update.Set(entity => entity.Hive, hive!.MapToDetailsDto()).SetOnInsert(entity => entity.Id, id);
         _collection.UpdateOne(filter, update, new UpdateOptions { IsUpsert = true });
     }
 
@@ -28,13 +30,13 @@ public class MongoHiveStorageProvider : IHiveStorageProvider
     {
         var filter = Builders<HiveEntity>.Filter.Eq(entity => entity.Id, id);
         var result = _collection.Find(filter).FirstOrDefault();
-        return result?.Hive!;
+        return result?.Hive.MapFromDetails()!;
     }
 
-    public List<Core.Components.Hive> GetAllHives()
+    public List<Core.Components.Hive?> GetAllHives()
     {
         var hives = _collection.Find(new BsonDocument()).ToList();
-        return hives.ConvertAll(entity => entity.Hive);
+        return hives.ConvertAll(entity => entity.Hive.MapFromDetails())!;
     }
 
     // Other methods as needed
@@ -47,8 +49,8 @@ public class MongoHiveStorageProvider : IHiveStorageProvider
     }
 }
 
-public class HiveEntity
+internal class HiveEntity
 {
     public Guid Id { get; set; }
-    public Core.Components.Hive Hive { get; set; }
+    public HiveDetailsDto Hive { get; set; }
 }

@@ -7,8 +7,9 @@ namespace Hive.NET.Core.Manager;
 
 public interface IHiveManager
 {
-    public void AddHive(Guid id, Components.Hive hive);
-    public Components.Hive GetHive(Guid id);
+    public void AddHive(Guid id, Components.Hive? hive);
+    public Components.Hive? GetHive(Guid id);
+    public Components.Hive? GetHive(string name);
     
     //Internals
     internal List<HiveDto> GetHives();

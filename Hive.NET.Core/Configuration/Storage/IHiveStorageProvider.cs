@@ -7,5 +7,5 @@ public interface IHiveStorageProvider
 {
     void UpsertHive(Guid id, Components.Hive? hive);
     Components.Hive? GetHive(Guid id);
-    List<Components.Hive> GetAllHives();
+    List<Components.Hive?> GetAllHives();
 }

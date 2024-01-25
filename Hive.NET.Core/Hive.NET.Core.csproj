@@ -21,6 +21,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Hive.NET.Persistence</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectCapability Include="AspNetCore" />
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>

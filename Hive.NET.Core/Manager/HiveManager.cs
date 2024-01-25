@@ -10,34 +10,23 @@ namespace Hive.NET.Core.Manager;
 
 internal sealed class HiveManager : IHiveManager
 {
-    private ConcurrentDictionary<Guid, Components.Hive> HiveStorage { get; } = new();
+    private ConcurrentDictionary<Guid, Components.Hive?> HiveStorage { get; } = new();
 
     private static HiveManager _instance = new();
     
-    internal bool Persistence { get; init; }
-
-    HiveManager()
-    {
-        if (Persistence)
-        {
-            
-        }
-    }
-    
     public static IHiveManager GetInstance()
     {
-        _instance ??= new HiveManager();
         return _instance;
     }
 
-    public void AddHive(Guid id, Components.Hive hive)
+    public void AddHive(Guid id, Components.Hive? hive)
     {
-        hive.Persistent = Persistence;
         _instance.HiveStorage.TryAdd(id, hive);
     }
 
-    public Components.Hive GetHive(Guid id) => _instance.HiveStorage[id];
+    public Components.Hive? GetHive(Guid id) => _instance.HiveStorage[id];
 
+    public Components.Hive? GetHive(string name) => _instance.HiveStorage.Values.FirstOrDefault(x => x!._name == name);
     
     // ***Internals
     List<HiveDto> IHiveManager.GetHives()

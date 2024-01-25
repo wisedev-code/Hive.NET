@@ -1,6 +1,8 @@
 ﻿using System.Data.SqlClient;
 using System.Text.Json;
+using Hive.NET.Core.Api;
 using Hive.NET.Core.Configuration.Storage;
+using Hive.NET.Core.Extensions;
 
 namespace Hive.NET.Persistence;
 
@@ -73,12 +75,12 @@ namespace Hive.NET.Persistence;
 
         private string SerializeHive(Core.Components.Hive hive)
         {
-            return JsonSerializer.Serialize(hive);
+            return JsonSerializer.Serialize(hive.MapToDetailsDto());
         }
 
         private Core.Components.Hive DeserializeHive(string hiveData)
         {
-            return JsonSerializer.Deserialize<Core.Components.Hive>(hiveData)!;
+            return JsonSerializer.Deserialize<HiveDetailsDto>(hiveData)!.MapFromDetails();
         }
 
         private void EnsureDatabaseCreated()

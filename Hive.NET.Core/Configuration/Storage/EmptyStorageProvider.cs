@@ -15,7 +15,7 @@ public class EmptyStorageProvider : IHiveStorageProvider
         return null!;
     }
 
-    public List<Components.Hive> GetAllHives()
+    public List<Components.Hive?> GetAllHives()
     {
         return null!;
     }

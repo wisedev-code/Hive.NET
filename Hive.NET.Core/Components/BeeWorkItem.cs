@@ -13,9 +13,15 @@ public class BeeWorkItem
         this.onFailure = onFailure;
     }
 
+    internal BeeWorkItem(Guid id, string? description)
+    {
+        Id = id;
+        Description = description;
+    }
+
     public Task task { get; }
     public Action onSuccess { get; }
     public Action<Exception> onFailure { get; }
     public Guid Id { get; set; }
-    public string Description { get; set; }
+    public string? Description { get; set; }
 }

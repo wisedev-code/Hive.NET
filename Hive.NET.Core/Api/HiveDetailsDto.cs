@@ -9,4 +9,5 @@ internal class HiveDetailsDto
     public Guid Id { get; set; }
     public string Name { get; set; }
     public List<BeeWorkItemDto> WorkItems { get; set; }
+    public List<BeeDto> Swarm { get; set; }
 }

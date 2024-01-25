@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
+using Hive.NET.Core.Api;
 using Hive.NET.Core.Configuration.Storage;
+using Hive.NET.Core.Extensions;
 
 namespace Hive.NET.Persistence;
 
@@ -38,25 +40,28 @@ namespace Hive.NET.Persistence;
             return hives.Find(existing => existing!.Id == id);
         }
 
-        public List<Core.Components.Hive> GetAllHives()
+        public List<Core.Components.Hive?> GetAllHives()
         {
-            var hives = new List<Core.Components.Hive>();
-
+            var hives = new List<HiveDetailsDto>();
+        
             try
             {
-                using (var fileStream = File.OpenRead(_filePath))
-                using (var streamReader = new StreamReader(fileStream))
+                using var fileStream = File.OpenRead(_filePath);
+                using var streamReader = new StreamReader(fileStream);
+                var jsonString = streamReader.ReadToEnd();
+                if (jsonString == string.Empty)
                 {
-                    var jsonString = streamReader.ReadToEnd();
-                    hives = JsonSerializer.Deserialize<List<Core.Components.Hive>>(jsonString);
+                    return new List<Core.Components.Hive?>();
                 }
+                
+                hives = JsonSerializer.Deserialize<List<HiveDetailsDto>>(jsonString);
             }
             catch (FileNotFoundException)
             {
                 // Ignore if the file is not found, as it will be created on the next write
             }
 
-            return (hives ?? new List<Core.Components.Hive>())!;
+            return (hives?.Select(x => x.MapFromDetails()).ToList() ?? new List<Core.Components.Hive?>())!;
         }
         
         private void EnsureFileCreated()
@@ -67,14 +72,12 @@ namespace Hive.NET.Persistence;
             }
         }
 
-        private void WriteHivesToFile(List<Core.Components.Hive> hives)
+        private void WriteHivesToFile(List<Core.Components.Hive?> hives)
         {
-            var jsonString = JsonSerializer.Serialize(hives);
+            var jsonString = JsonSerializer.Serialize(hives.Select(x => x.MapToDetailsDto()));
 
-            using (var fileStream = File.OpenWrite(_filePath))
-            using (var streamWriter = new StreamWriter(fileStream))
-            {
-                streamWriter.Write(jsonString);
-            }
+            using var fileStream = File.OpenWrite(_filePath);
+            using var streamWriter = new StreamWriter(fileStream);
+            streamWriter.Write(jsonString);
         }
     }

@@ -16,14 +16,13 @@ namespace Hive.NET.Core.Components;
 public class Hive
 {
     private ILogger<Hive> _logger;
-    public Guid Id { get; }
-    internal bool Persistent { get; set; }
-
-    private string _name;
-    private List<Bee> Swarm = new();
+    public Guid Id { get; init; }
+    private bool _persistent;
+    internal string _name;
+    internal List<Bee> Swarm = new();
     private ConcurrentQueue<BeeWorkItem> Tasks = new();
-    private List<BeeWorkItem> Items = new();
-    private ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt)> Statuses = new();
+    internal List<BeeWorkItem> Items = new();
+    internal ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt)> Statuses = new();
 
     private readonly IHiveStorageProvider _hiveStorageProvider;
 
@@ -33,9 +32,14 @@ public class Hive
         {
             _name = Guid.NewGuid().ToString(); //todo create fun animal names by default.
         }
+        else
+        {
+            _name = name;
+        }
         
         var options = ServiceLocator.GetService<IOptions<HiveSettings>>();
         _logger = BoostrapExtensions.BuildLogger<Hive>(options.Value.LogLevel);
+        _persistent = options.Value.Persistence; 
         Id = Guid.NewGuid();
         
         for (int i = 0; i < swarmSize; i++)
@@ -135,8 +139,11 @@ public class Hive
         var success = await bee.DoWork(workItem, callback);
         Statuses[workItem.Id] = success ? new (WorkItemStatus.Completed, DateTime.UtcNow)
             : new (WorkItemStatus.Failed, DateTime.UtcNow);
-        
-        _hiveStorageProvider.UpsertHive(Id, this);
+
+        if (_persistent)
+        {
+            _hiveStorageProvider.UpsertHive(Id, this);
+        }
     }
 
     internal HiveDto MapToDto() =>
@@ -156,7 +163,12 @@ public class Hive
         {
             Id = Id,
             Name = _name,
-            WorkItems = Items.ToList().Select(workItem =>
+            Swarm = Swarm.Select(x => new BeeDto()
+            {
+                Id = x.Id,
+                IsWorking = x.IsWorking
+            }).ToList(),
+            WorkItems = Items.Select(workItem =>
                 new BeeWorkItemDto()
                 {
                     Id = workItem.Id,
@@ -165,6 +177,7 @@ public class Hive
                     Description = workItem.Description
                 }).ToList()
         };
+    
 
     internal List<BeeErrorDto> MapToErrorsDto() =>
         Swarm.SelectMany(bee =>
