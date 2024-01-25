@@ -33,7 +33,7 @@ internal class Bee
 
             beeCallback(this);
             //todo refactor to use internal logging to enable log level filtering
-            //_logger.LogDebug("{0:G}: bzzzt, nothing happened", DateTime.UtcNow);
+            _logger.LogDebug("{0:G}: bzzzt, nothing happened", DateTime.UtcNow);
             unitOfWork.onSuccess?.Invoke();
 
             if (unitOfWork.NextTask is not null)
