@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Tests", "Hive.NET.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{0EFFF39D-BB53-4988-867F-C1C33D1DAD1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Persistance", "Hive.NET.Persistance\Hive.NET.Persistance.csproj", "{F497C727-9538-4BF0-891B-48A22967A0C5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Persistence", "Hive.NET.Persistence\Hive.NET.Persistence.csproj", "{F497C727-9538-4BF0-891B-48A22967A0C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

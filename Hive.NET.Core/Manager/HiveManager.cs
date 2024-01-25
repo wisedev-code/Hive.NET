@@ -13,14 +13,29 @@ internal sealed class HiveManager : IHiveManager
     private ConcurrentDictionary<Guid, Components.Hive> HiveStorage { get; } = new();
 
     private static HiveManager _instance = new();
+    
+    internal bool Persistence { get; init; }
 
+    HiveManager()
+    {
+        if (Persistence)
+        {
+            
+        }
+    }
+    
     public static IHiveManager GetInstance()
     {
         _instance ??= new HiveManager();
         return _instance;
     }
 
-    public void AddHive(Guid id, Components.Hive hive) => _instance.HiveStorage.TryAdd(id,hive);
+    public void AddHive(Guid id, Components.Hive hive)
+    {
+        hive.Persistent = Persistence;
+        _instance.HiveStorage.TryAdd(id, hive);
+    }
+
     public Components.Hive GetHive(Guid id) => _instance.HiveStorage[id];
 
     

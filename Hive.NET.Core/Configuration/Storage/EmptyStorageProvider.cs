@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Hive.NET.Core.Configuration;
+namespace Hive.NET.Core.Configuration.Storage;
 
 public class EmptyStorageProvider : IHiveStorageProvider
 {
-    public void AddHive(Guid id, Components.Hive hive)
+    public void UpsertHive(Guid id, Components.Hive? hive)
     {
         //nothing
     }
 
-    public List<Components.Hive> GetHives()
+    public Components.Hive? GetHive(Guid id)
     {
-        return new List<Components.Hive>();
+        return null!;
+    }
+
+    public List<Components.Hive> GetAllHives()
+    {
+        return null!;
     }
 }

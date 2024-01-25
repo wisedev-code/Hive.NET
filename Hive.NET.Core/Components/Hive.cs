@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Bogus;
 using Hive.NET.Core.Api;
 using Hive.NET.Core.Configuration;
+using Hive.NET.Core.Configuration.Storage;
 using Hive.NET.Core.Models.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -16,11 +17,15 @@ public class Hive
 {
     private ILogger<Hive> _logger;
     public Guid Id { get; }
+    internal bool Persistent { get; set; }
+
     private string _name;
     private List<Bee> Swarm = new();
     private ConcurrentQueue<BeeWorkItem> Tasks = new();
     private List<BeeWorkItem> Items = new();
-    private ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt)> Statuses = new(); 
+    private ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt)> Statuses = new();
+
+    private readonly IHiveStorageProvider _hiveStorageProvider;
 
     public Hive(int swarmSize = 3, string? name = null)
     {
@@ -37,6 +42,8 @@ public class Hive
         {
             Swarm.Add(new Bee());
         }
+
+        _hiveStorageProvider = ServiceLocator.GetService<IHiveStorageProvider>();
     }
 
     public Guid AddTask(BeeWorkItem task)
@@ -128,6 +135,8 @@ public class Hive
         var success = await bee.DoWork(workItem, callback);
         Statuses[workItem.Id] = success ? new (WorkItemStatus.Completed, DateTime.UtcNow)
             : new (WorkItemStatus.Failed, DateTime.UtcNow);
+        
+        _hiveStorageProvider.UpsertHive(Id, this);
     }
 
     internal HiveDto MapToDto() =>
