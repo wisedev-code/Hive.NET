@@ -12,27 +12,27 @@ namespace Hive.NET.Demo.Console
             var builder = new ConfigurationBuilder();
             BuildConfiguration(builder);
             IConfiguration configuration = builder.Build();
-            
+
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((_, services) =>
                 {
                     services.ConfigureHive(configuration);
                 }).Build();
-            
+
             host.Services.UseHive();
-            
+
             var service = ActivatorUtilities.CreateInstance<HiveDemoService>(host.Services);
             service.Run();
         }
-        
+
         static void BuildConfiguration(IConfigurationBuilder builder)
         {
             builder.SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
-        } 
+        }
     }
-    
+
     public delegate void BeeReturnedCallback(string result);
 
     public class CallBack
@@ -40,12 +40,12 @@ namespace Hive.NET.Demo.Console
         public void StartNewTask(BeeReturnedCallback beeReturned)
         {
             System.Console.WriteLine("I have started new Task.");
-            
+
             if (beeReturned != null)
                 beeReturned("I have completed Task.");
         }
     }
-    
+
     public class CallBackTest
     {
         public void Test()
