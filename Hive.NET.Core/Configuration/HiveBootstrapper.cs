@@ -32,7 +32,7 @@ public static class HiveBootstrapper
             var hiveManager = HiveManager.GetInstance();
             foreach (var hive in hives)
             {
-                hiveManager.AddHive(hive.Id, hive);    
+                hiveManager.AddHive(hive!.Id, hive);    
             }
         }
         

@@ -38,9 +38,7 @@ public class MongoHiveStorageProvider : IHiveStorageProvider
         var hives = _collection.Find(new BsonDocument()).ToList();
         return hives.ConvertAll(entity => entity.Hive.MapFromDetails())!;
     }
-
-    // Other methods as needed
-
+    
     private void EnsureIndexes()
     {
         var indexKeysDefinition = Builders<HiveEntity>.IndexKeys.Ascending(entity => entity.Id);
