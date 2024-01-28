@@ -7,6 +7,20 @@
         <RootNamespace>Hive.NET.Persistence</RootNamespace>
     </PropertyGroup>
 
+
+    <PropertyGroup>
+        <PackageId>HiveNET.Persistence</PackageId>
+        <Version>0.0.2</Version>
+        <Authors>Wisedev, Piotr Świerad</Authors>
+        <Company>Wisedev</Company>
+        <Description>Scalable task management in .NET with animal reference. - Addition to store results</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/wisedev-code/Hive.NET</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/wisedev-code/Hive.NET</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageIcon>icon.png</PackageIcon>
+    </PropertyGroup>
+    
     <ItemGroup>
       <ProjectReference Include="..\Hive.NET.Core\Hive.NET.Core.csproj" />
     </ItemGroup>
