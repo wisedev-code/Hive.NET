@@ -66,9 +66,9 @@ public class HiveDemoService
 
         var seqTasks = CreateTasks(3);
 
-        var beeTaskSeq1 = new BeeWorkItem(seqTasks[0], () => System.Console.WriteLine("Finished 1-1!"));
-        var beeTaskSeq2 = new BeeWorkItem(seqTasks[1], () => System.Console.WriteLine("Finished 1-2!"));
-        var beeTaskSeq3 = new BeeWorkItem(seqTasks[2], () => System.Console.WriteLine("Finished 1-3!"));
+        var beeTaskSeq1 = new BeeWorkItem(seqTasks[0], string.Empty, () => System.Console.WriteLine("Finished 1-1!"));
+        var beeTaskSeq2 = new BeeWorkItem(seqTasks[1], string.Empty, () => System.Console.WriteLine("Finished 1-2!"));
+        var beeTaskSeq3 = new BeeWorkItem(seqTasks[2], string.Empty, () => System.Console.WriteLine("Finished 1-3!"));
 
         beeTaskSeq1.AddNextTask(beeTaskSeq2);
         beeTaskSeq2.AddNextTask(beeTaskSeq3);
@@ -76,7 +76,7 @@ public class HiveDemoService
         hive.AddTask(beeTaskSeq1);
 
         var tasks = CreateTasks(5);
-        tasks.ForEach(x => hive.AddTask(new BeeWorkItem(x, () => System.Console.WriteLine("Finished!"))));
+        tasks.ForEach(x => hive.AddTask(new BeeWorkItem(x, string.Empty, () => System.Console.WriteLine("Finished!"))));
 
         System.Console.ReadLine();
     }

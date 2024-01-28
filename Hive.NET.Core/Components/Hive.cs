@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Bogus;
 using Hive.NET.Core.Api;
 using Hive.NET.Core.Configuration;
 using Hive.NET.Core.Configuration.Storage;
@@ -178,7 +177,6 @@ public class Hive
                 }).ToList()
         };
     
-
     internal List<BeeErrorDto> MapToErrorsDto() =>
         Swarm.SelectMany(bee =>
             bee.RegisteredErrors.Select(x => x.MapToDto())).ToList();
