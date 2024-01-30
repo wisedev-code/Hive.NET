@@ -18,7 +18,7 @@
         <PackageProjectUrl>https://github.com/wisedev-code/Hive.NET</PackageProjectUrl>
         <RepositoryUrl>https://github.com/wisedev-code/Hive.NET</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageIcon>icon.png</PackageIcon>
+        <PackageIcon>iconp.png</PackageIcon>
     </PropertyGroup>
     
     <ItemGroup>
