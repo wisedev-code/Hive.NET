@@ -32,7 +32,7 @@
     </ItemGroup>
     
     <ItemGroup>
-      <None Include="..\icon.png" Pack="true" PackagePath="\" />
+      <None Include="..\icons\icon.png" Pack="true" PackagePath="\" />
       <PackageReference Include="Bogus" Version="35.4.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />

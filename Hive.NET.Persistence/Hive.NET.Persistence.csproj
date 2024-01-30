@@ -26,7 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\icon.png" Pack="true" PackagePath="\" />
+        <None Include="..\icons\iconp.png" Pack="true" PackagePath="\" />
         <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
         <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     </ItemGroup>
