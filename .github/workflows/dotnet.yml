@@ -45,8 +45,11 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 8.0.x
-      - name: Build NuGet
+      - name: Build NuGet Core
         run: dotnet pack ./Hive.NET.Core/Hive.NET.Core.csproj --output .
+
+      - name: Build NuGet Persistance
+        run: dotnet pack ./Hive.NET.Persistence/Hive.NET.Persistence.csproj --output .
 
       - name: Set Api Key
         run: nuget setapikey ${{ secrets.NUGET_SECRET }}
