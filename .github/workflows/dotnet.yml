@@ -17,7 +17,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -30,7 +30,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 8.0.x
     - name: Test
       run: dotnet test
     - name: echo
@@ -44,9 +44,12 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: 6.0.x
-      - name: Build NuGet
+          dotnet-version: 8.0.x
+      - name: Build NuGet Core
         run: dotnet pack ./Hive.NET.Core/Hive.NET.Core.csproj --output .
+
+      - name: Build NuGet Persistance
+        run: dotnet pack ./Hive.NET.Persistence/Hive.NET.Persistence.csproj --output .
 
       - name: Set Api Key
         run: nuget setapikey ${{ secrets.NUGET_SECRET }}

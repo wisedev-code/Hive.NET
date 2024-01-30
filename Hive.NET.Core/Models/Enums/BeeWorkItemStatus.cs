@@ -1,6 +1,6 @@
 ﻿namespace Hive.NET.Core.Models.Enums;
 
-public enum BeeWorkItemStatus
+public enum WorkItemStatus
 {
     Waiting = 0,
     Running = 1,

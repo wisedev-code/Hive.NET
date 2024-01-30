@@ -1,4 +1,7 @@
-﻿using Hive.NET.Core.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Hive.NET.Core.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -7,8 +10,9 @@ namespace Hive.NET.Core.Components;
 internal class Bee
 {
     private readonly ILogger<Bee> _logger;
-    public Guid Id { get;}
-    public bool IsWorking { get; private set; }
+    internal List<BeeError> RegisteredErrors = new();
+    public Guid Id { get; set; }
+    public bool IsWorking { get; set; }
 
     public Bee()
     {
@@ -45,6 +49,16 @@ internal class Bee
         {
             _logger.LogDebug($"Bee {Id} failed working on task {unitOfWork.Id} with exception: ({ex})");
             unitOfWork.onFailure?.Invoke(ex);
+            RegisteredErrors.Add(new BeeError()
+            {
+                Id = Guid.NewGuid(),
+                Message = ex.Message,
+                StackTrace = ex.StackTrace,
+                WorkItemDescription = unitOfWork.Description,
+                WorkItemId = unitOfWork.Id,
+                OccuredAt = DateTime.UtcNow
+            });
+            
             return false;
         }
     }
