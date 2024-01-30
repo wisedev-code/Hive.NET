@@ -13,7 +13,7 @@
         <Version>0.0.2</Version>
         <Authors>Wisedev, Piotr Świerad</Authors>
         <Company>Wisedev</Company>
-        <Description>Scalable task management in .NET with animal reference. - Addition to store results</Description>
+        <Description>Scalable task management in .NET with animal reference. - Addition to store status information</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/wisedev-code/Hive.NET</PackageProjectUrl>
         <RepositoryUrl>https://github.com/wisedev-code/Hive.NET</RepositoryUrl>
@@ -26,8 +26,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
-      <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+        <None Include="..\icon.png" Pack="true" PackagePath="\" />
+        <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
+        <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     </ItemGroup>
 
 </Project>
