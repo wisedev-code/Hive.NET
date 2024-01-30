@@ -40,7 +40,7 @@ namespace Hive.NET.Persistence;
             return hives.Find(existing => existing!.Id == id);
         }
 
-        public List<Core.Components.Hive?> GetAllHives()
+        public List<Core.Components.Hive> GetAllHives()
         {
             var hives = new List<HiveDetailsDto>();
         
@@ -51,7 +51,7 @@ namespace Hive.NET.Persistence;
                 var jsonString = streamReader.ReadToEnd();
                 if (jsonString == string.Empty)
                 {
-                    return new List<Core.Components.Hive?>();
+                    return new List<Core.Components.Hive>();
                 }
                 
                 hives = JsonSerializer.Deserialize<List<HiveDetailsDto>>(jsonString);

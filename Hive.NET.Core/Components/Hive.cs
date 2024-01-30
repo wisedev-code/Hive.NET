@@ -16,13 +16,13 @@ public class Hive
 {
     private ILogger<Hive> _logger;
     public Guid Id { get; init; }
-    private bool _persistent;
     internal string _name;
     internal List<Bee> Swarm = new();
     private ConcurrentQueue<BeeWorkItem> Tasks = new();
     internal List<BeeWorkItem> Items = new();
     internal ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt)> Statuses = new();
 
+    private readonly bool _persistent;
     private readonly IHiveStorageProvider _hiveStorageProvider;
 
     public Hive(int swarmSize = 3, string? name = null)

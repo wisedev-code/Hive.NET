@@ -15,7 +15,7 @@ public static class HiveBootstrapper
 
     public static void ConfigureHive(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<IHiveManager, HiveManager>();
+        services.AddSingleton<IHiveManager>();
         services.Configure<HiveSettings>(configuration.GetSection(HiveSectionName));
         services.AddTransient<IHiveStorageProvider, EmptyStorageProvider>();
         services.AddHostedService<HiveApi>();
@@ -26,16 +26,18 @@ public static class HiveBootstrapper
         ServiceLocator.SetServiceProvider(serviceProvider);
         var options = serviceProvider.GetRequiredService<IOptions<HiveSettings>>();
         var storageProvider = serviceProvider.GetRequiredService<IHiveStorageProvider>();
-        if (options.Value.Persistence)
+        if (!options.Value.Persistence)
         {
-            var hives = storageProvider.GetAllHives();
-            var hiveManager = HiveManager.GetInstance();
-            foreach (var hive in hives)
-            {
-                hiveManager.AddHive(hive!.Id, hive);    
-            }
+            return serviceProvider;
         }
         
+        var hives = storageProvider.GetAllHives();
+        var hiveManager = HiveManager.GetInstance();
+        foreach (var hive in hives)
+        {
+            hiveManager.AddHive(hive!.Id, hive);    
+        }
+
         return serviceProvider;
     }
 }

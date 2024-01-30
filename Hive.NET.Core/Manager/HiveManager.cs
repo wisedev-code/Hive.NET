@@ -34,13 +34,13 @@ internal sealed class HiveManager : IHiveManager
         return HiveStorage.Values.Select(hive => hive.MapToDto()).ToList();
     }
     
-    HiveDetailsDto IHiveManager.GetHiveDetails(Guid id)
+    HiveDetailsDto? IHiveManager.GetHiveDetails(Guid id)
     {
-        return HiveStorage[id].MapToDetailsDto();
+        return !HiveStorage.ContainsKey(id) ? null : HiveStorage[id]!.MapToDetailsDto();
     }
 
-    List<BeeErrorDto> IHiveManager.GetHiveRegisteredErrors(Guid id)
+    List<BeeErrorDto>? IHiveManager.GetHiveRegisteredErrors(Guid id)
     {
-        return HiveStorage[id].MapToErrorsDto();
+        return !HiveStorage.ContainsKey(id) ? null : HiveStorage[id]!.MapToErrorsDto();
     }
 }

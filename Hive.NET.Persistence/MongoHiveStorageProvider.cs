@@ -33,7 +33,7 @@ public class MongoHiveStorageProvider : IHiveStorageProvider
         return result?.Hive.MapFromDetails()!;
     }
 
-    public List<Core.Components.Hive?> GetAllHives()
+    public List<Core.Components.Hive> GetAllHives()
     {
         var hives = _collection.Find(new BsonDocument()).ToList();
         return hives.ConvertAll(entity => entity.Hive.MapFromDetails())!;

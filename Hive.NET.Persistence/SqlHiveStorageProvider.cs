@@ -16,7 +16,7 @@ namespace Hive.NET.Persistence;
             EnsureDatabaseCreated();
         }
 
-        public void UpsertHive(Guid id, Core.Components.Hive? hive)
+        public void UpsertHive(Guid id, Core.Components.Hive hive)
         {
             using var connection = new SqlConnection(_connectionString);
             connection.Open();
@@ -35,7 +35,7 @@ namespace Hive.NET.Persistence;
             command.ExecuteNonQuery();
         }
 
-        public Core.Components.Hive GetHive(Guid id)
+        public Core.Components.Hive? GetHive(Guid id)
         {
             using var connection = new SqlConnection(_connectionString);
             connection.Open();
@@ -44,13 +44,14 @@ namespace Hive.NET.Persistence;
             command.Parameters.AddWithValue("@Id", id);
 
             using var reader = command.ExecuteReader();
-            if (reader.Read())
+            if (!reader.Read())
             {
-                var hiveData = reader["HiveData"].ToString();
-                return DeserializeHive(hiveData);
+                return null;
             }
 
-            return null;
+            var hiveData = reader["HiveData"].ToString();
+            return DeserializeHive(hiveData);
+
         }
 
         public List<Core.Components.Hive> GetAllHives()
@@ -65,10 +66,10 @@ namespace Hive.NET.Persistence;
             while (reader.Read())
             {
                 var hiveData = reader["HiveData"].ToString();
-                hives.Add(DeserializeHive(hiveData!));
+                hives.Add(DeserializeHive(hiveData!)!);
             }
 
-            return hives!;
+            return hives;
         }
 
         // Other methods as needed
@@ -78,7 +79,7 @@ namespace Hive.NET.Persistence;
             return JsonSerializer.Serialize(hive.MapToDetailsDto());
         }
 
-        private Core.Components.Hive DeserializeHive(string hiveData)
+        private Core.Components.Hive? DeserializeHive(string hiveData)
         {
             return JsonSerializer.Deserialize<HiveDetailsDto>(hiveData)!.MapFromDetails();
         }

@@ -13,6 +13,6 @@ public interface IHiveManager
     
     //Internals
     internal List<HiveDto> GetHives();
-    internal HiveDetailsDto GetHiveDetails(Guid id);
-    internal List<BeeErrorDto> GetHiveRegisteredErrors(Guid id);
+    internal HiveDetailsDto? GetHiveDetails(Guid id);
+    internal List<BeeErrorDto>? GetHiveRegisteredErrors(Guid id);
 }
