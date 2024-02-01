@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <PackageId>HiveNET.Core</PackageId>
-        <Version>0.0.3</Version>
+        <Version>0.0.4</Version>
         <Authors>Wisedev, Piotr Świerad</Authors>
         <Company>Wisedev</Company>
         <Description>Scalable task management in .NET with animal reference.</Description>
@@ -43,6 +43,10 @@
       <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Exceptions\" />
     </ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@ public static class HiveBootstrapper
 
     public static void ConfigureHive(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<IHiveManager>();
+        services.AddSingleton<IHiveManager, HiveManager>();
         services.Configure<HiveSettings>(configuration.GetSection(HiveSectionName));
         services.AddTransient<IHiveStorageProvider, EmptyStorageProvider>();
         services.AddHostedService<HiveApi>();

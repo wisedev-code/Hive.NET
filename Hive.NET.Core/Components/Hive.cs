@@ -60,6 +60,32 @@ public class Hive
         
         return taskId;
     }
+    
+    public Guid AddTask(BeeWorkItemsSequence task)
+    {
+        var items = task.All().ToList();
+        if (items.Count == 0)
+        {
+            throw new InvalidOperationException("WorkItemSequence does not contain elements");
+        }
+        
+        BeeWorkItem firstInSequence = items.First();
+        BeeWorkItem previousItem = firstInSequence;
+
+        foreach (var item in items.Skip(1))
+        {
+            previousItem.AddNextTask(item);
+            previousItem = item;
+        }
+        
+        Statuses.TryAdd(firstInSequence.Id, (WorkItemStatus.Waiting, DateTime.UtcNow));
+        task.Id = firstInSequence.Id;
+        Tasks.Enqueue(firstInSequence);
+        Items.Add(firstInSequence);
+        AssignTaskToRandomBee();
+        
+        return task.Id;
+    }
 
     public WorkItemStatus GetWorkItemStatus(Guid id)
     {
