@@ -21,13 +21,16 @@ public class HiveDemoService
     {
         _logger.LogInformation("Select test to run:" + Environment.NewLine +
                                "1 Normal Tasks " + Environment.NewLine +
-                               "2 Sequential task");
+                               "2 Sequential task" + Environment.NewLine +
+                               "3 Sequential type task");
 
         switch (System.Console.ReadLine())
         {
             case "1": RunNormalTasks();
                 break;
             case "2": RunSequentialTasks();
+                break;
+            case "3": RunSequenceTypeTasks();
                 break;
         }
     }
@@ -74,6 +77,31 @@ public class HiveDemoService
         beeTaskSeq2.AddNextTask(beeTaskSeq3);
 
         hive.AddTask(beeTaskSeq1);
+
+        var tasks = CreateTasks(5);
+        tasks.ForEach(x => hive.AddTask(new BeeWorkItem(x, string.Empty, () => System.Console.WriteLine("Finished!"))));
+
+        System.Console.ReadLine();
+    }
+    
+    private void RunSequenceTypeTasks()
+    {
+        var hiveId = HiveFactory.CreateHive(2);
+
+        var hive = _manager.GetHive(hiveId);
+
+        var seqTasks = CreateTasks(3);
+
+        var beeTaskSeq1 = new BeeWorkItem(seqTasks[0], string.Empty, () => System.Console.WriteLine("Finished 1-1!"));
+        var beeTaskSeq2 = new BeeWorkItem(seqTasks[1], string.Empty, () => System.Console.WriteLine("Finished 1-2!"));
+        var beeTaskSeq3 = new BeeWorkItem(seqTasks[2], string.Empty, () => System.Console.WriteLine("Finished 1-3!"));
+
+        var sequenceTypeTasks = new BeeWorkItemsSequence("test sequence");
+        sequenceTypeTasks.AddWorkItem(beeTaskSeq1);
+        sequenceTypeTasks.AddWorkItem(beeTaskSeq2);
+        sequenceTypeTasks.AddWorkItem(beeTaskSeq3);
+
+        hive.AddTask(sequenceTypeTasks);
 
         var tasks = CreateTasks(5);
         tasks.ForEach(x => hive.AddTask(new BeeWorkItem(x, string.Empty, () => System.Console.WriteLine("Finished!"))));
