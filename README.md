@@ -1,5 +1,5 @@
 # Hive.NET
-
+![Build Status](https://github.com/wisedev-code/Hive.NET/actions/workflows/dotnet.yml/badge.svg) ![Download Count](https://img.shields.io/nuget/dt/HiveNET.Core?label=Nuget%20Downloads%3A&style=plastic)
 <img align="right" height="180" width="180" style="padding: 25pt" src="https://static.vecteezy.com/system/resources/thumbnails/009/385/359/small/honeycomb-clipart-design-illustration-free-png.png"/>
 
 <p align="left">
