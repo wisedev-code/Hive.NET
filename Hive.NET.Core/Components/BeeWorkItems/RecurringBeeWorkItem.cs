@@ -23,6 +23,5 @@ public class RecurringBeeWorkItem
     public Action<Exception>? onFailure { get; }
     public Action Task { get; set; }
 
-    public BeeWorkItem CreateBeeWorkItem()
-        => new BeeWorkItem(new Task(action: Task), Description, onSuccess, onFailure);
+    public BeeWorkItem CreateBeeWorkItem() => new(new Task(action: Task), Description, onSuccess, onFailure);
 }

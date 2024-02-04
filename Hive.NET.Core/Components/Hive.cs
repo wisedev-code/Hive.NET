@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hive.NET.Core.Api;
 using Hive.NET.Core.Components.BeeWorkItems;
 using Hive.NET.Core.Configuration;
+using Hive.NET.Core.Configuration.Notification;
 using Hive.NET.Core.Configuration.Storage;
 using Hive.NET.Core.Models.Enums;
 using Microsoft.Extensions.Logging;
@@ -19,13 +20,15 @@ public class Hive
     public Guid Id { get; init; }
     internal string _name;
     internal List<Bee> Swarm = new();
+    internal ConcurrentQueue<BeeWorkItem> Tasks = new();
     internal bool IsArchived;
     private ConcurrentQueue<BeeWorkItem> _tasks = new();
     internal List<BeeWorkItem> Items = new();
-    internal ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt)> Statuses = new();
+    internal ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt, int Priority)> Statuses = new();
 
     private readonly bool _persistent;
     private readonly IHiveStorageProvider _hiveStorageProvider;
+    private readonly INotificationProvider _notificationProvider;
 
     public Hive(int swarmSize = 3, string? name = null)
     {
@@ -49,15 +52,22 @@ public class Hive
         }
 
         _hiveStorageProvider = ServiceLocator.GetService<IHiveStorageProvider>();
+        _notificationProvider = ServiceLocator.GetService<INotificationProvider>();
         IsArchived = false;
     }
 
     public Guid AddTask(BeeWorkItem task)
     {
         var taskId = Guid.NewGuid();
-        Statuses.TryAdd(taskId, (WorkItemStatus.Waiting, DateTime.UtcNow));
+        Statuses.TryAdd(taskId, (WorkItemStatus.Waiting, DateTime.UtcNow, Priority: 2));
         task.Id = taskId;
-        _tasks.Enqueue(task);
+        
+        Tasks.Enqueue(task);
+        //reorder to keep prio in sync
+        Tasks = new ConcurrentQueue<BeeWorkItem>(
+            Tasks.OrderBy(t => Statuses[t.Id].Priority)
+        );
+        
         Items.Add(task);
         AssignTaskToRandomBee();
         
@@ -81,7 +91,7 @@ public class Hive
             previousItem = item;
         }
         
-        Statuses.TryAdd(firstInSequence.Id, (WorkItemStatus.Waiting, DateTime.UtcNow));
+        Statuses.TryAdd(firstInSequence.Id, (WorkItemStatus.Waiting, DateTime.UtcNow, (int)BeeWorkItemPriority.Medium));
         task.Id = firstInSequence.Id;
         _tasks.Enqueue(firstInSequence);
         Items.Add(firstInSequence);
@@ -90,14 +100,14 @@ public class Hive
         return task.Id;
     }
 
-    public WorkItemStatus GetWorkItemStatus(Guid id)
+    public (WorkItemStatus Status, DateTime UpdatedAt, int Priority) GetWorkItemStatus(Guid id)
     {
         if (!Statuses.ContainsKey(id))
         {
-            return WorkItemStatus.NotExist;
+            return new ValueTuple<WorkItemStatus, DateTime, int>(WorkItemStatus.NotExist, DateTime.MinValue, (int)BeeWorkItemPriority.VeryLow);
         }
 
-        return Statuses[id].Status;
+        return Statuses[id];
     }
     
     public WorkItemStatus TryRemoveTask(Guid id)
@@ -114,7 +124,7 @@ public class Hive
         }
 
         _logger.LogDebug($"Task {id} is removed from queue");
-        return (Statuses[id] = new (WorkItemStatus.Removed, DateTime.Now)).Status;
+        return (Statuses[id] = new (WorkItemStatus.Removed, DateTime.Now, (int)BeeWorkItemPriority.Medium)).Status;
     }
 
     public void Sudoku()
@@ -129,22 +139,22 @@ public class Hive
     {
         Bee.BeeFinishedWorkCallback callback = AssignTaskToBee;
 
-        if (_tasks.TryDequeue(out var task))
+        if (Tasks.TryDequeue(out var task))
         {
             var state = GetWorkItemStatus(task.Id);
-            if (state == WorkItemStatus.Removed)
+            if (state.Status == WorkItemStatus.Removed)
             {
                 return;
             }
             
             Statuses[Id] = new (
-                WorkItemStatus.Running, DateTime.UtcNow);
+                WorkItemStatus.Running, DateTime.UtcNow, state.Priority);
             
             await InvokeTaskOnBee(bee, task, callback);
         }
     }
 
-    private async Task AssignTaskToRandomBee()
+    internal async Task AssignTaskToRandomBee()
     {
         Bee.BeeFinishedWorkCallback callback = AssignTaskToBee;
         
@@ -156,10 +166,10 @@ public class Hive
         }
         
         _logger.LogDebug($"Task assigned to bee: {bee.Id}");
-        if (_tasks.TryDequeue(out var task))
+        if (Tasks.TryDequeue(out var task))
         {
             var state = GetWorkItemStatus(task.Id);
-            if (state == WorkItemStatus.Removed)
+            if (state.Status == WorkItemStatus.Removed)
             {
                 return;
             }
@@ -173,8 +183,17 @@ public class Hive
     {
         _logger.LogInformation($"Bee {bee.Id} will perform task {workItem.Id}");
         var success = await bee.DoWork(workItem, callback);
-        Statuses[workItem.Id] = success ? new (WorkItemStatus.Completed, DateTime.UtcNow)
-            : new (WorkItemStatus.Failed, DateTime.UtcNow);
+        var currentState = Statuses[workItem.Id];
+        Statuses[workItem.Id] = success ? new (WorkItemStatus.Completed, DateTime.UtcNow, currentState.Priority)
+            : new (WorkItemStatus.Failed, DateTime.UtcNow, currentState.Priority);
+        
+        _notificationProvider.Notify(new
+        {
+            ItemId = workItem.Id,
+            ItemDescription = workItem.Description,
+            Status = Statuses[workItem.Id].Status,
+            UpdatedAt = Statuses[workItem.Id].UpdatedAt
+        });
 
         if (_persistent)
         {

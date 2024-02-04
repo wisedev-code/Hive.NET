@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <PackageId>HiveNET.Core</PackageId>
-        <Version>0.0.4</Version>
+        <Version>0.5.0</Version>
         <Authors>Wisedev, Piotr Świerad</Authors>
         <Company>Wisedev</Company>
         <Description>Scalable task management in .NET with animal reference.</Description>
@@ -23,6 +23,9 @@
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Hive.NET.Persistence</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Hive.NET.Extensions</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
 

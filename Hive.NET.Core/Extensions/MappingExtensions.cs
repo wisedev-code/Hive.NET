@@ -25,7 +25,7 @@ public static class MappingExtensions
                 ..detailsDto.WorkItems.Select(workItem =>
                     new BeeWorkItem(id: workItem.Id, description: workItem.Description))
             ],
-            Statuses = new ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt)>(
-                detailsDto.WorkItems.ToDictionary(x => x.Id, x => (x.Status, x.UpdatedAt) ))
+            Statuses = new ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt, int Priority)>(
+                detailsDto.WorkItems.ToDictionary(x => x.Id, x => (x.Status, x.UpdatedAt, x.Priority) ))
         };
 }

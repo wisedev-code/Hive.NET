@@ -1,5 +1,6 @@
 ﻿using Hive.NET.Core.Components;
 using Hive.NET.Core.Configuration;
+using Hive.NET.Core.Configuration.Notification;
 using Hive.NET.Core.Configuration.Storage;
 using Hive.NET.Core.Models.Enums;
 using Microsoft.Extensions.Logging;
@@ -39,7 +40,7 @@ public class HiveTests
         var status = hive.GetWorkItemStatus(taskId);
 
         // Assert
-        Assert.Equal(WorkItemStatus.Waiting, status);
+        Assert.Equal(WorkItemStatus.Waiting, status.Status);
     }
 
     [Fact]
@@ -54,7 +55,7 @@ public class HiveTests
         var status = hive.GetWorkItemStatus(nonExistentTaskId);
 
         // Assert
-        Assert.Equal(WorkItemStatus.NotExist, status);
+        Assert.Equal(WorkItemStatus.NotExist, status.Status);
     }
 
     [Fact]
@@ -178,7 +179,10 @@ public class HiveTests
         var serviceProviderMock = new Mock<IServiceProvider>();
         var optionsMock = new Mock<IOptions<HiveSettings>>();
         var hiveStorageMock = new Mock<IHiveStorageProvider>();
+        var notificationProvider = new Mock<INotificationProvider>();
         optionsMock.SetupGet(x => x.Value).Returns(new HiveSettings());
+        serviceProviderMock.Setup(x => x.GetService(typeof(INotificationProvider)))
+            .Returns(notificationProvider.Object);
         serviceProviderMock.Setup(x => x.GetService(typeof(IOptions<HiveSettings>))).Returns(optionsMock.Object);
         serviceProviderMock.Setup(x => x.GetService(typeof(IHiveStorageProvider))).Returns(hiveStorageMock.Object);
         ServiceLocator.SetServiceProvider(serviceProviderMock.Object);

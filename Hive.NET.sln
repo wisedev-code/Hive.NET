@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Tests", "Hive.NET.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Persistence", "Hive.NET.Persistence\Hive.NET.Persistence.csproj", "{F497C727-9538-4BF0-891B-48A22967A0C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Extensions", "Hive.NET.Extensions\Hive.NET.Extensions.csproj", "{54364D7C-8E37-4A74-A80D-9B532E81D41E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,5 +41,9 @@ Global
 		{F497C727-9538-4BF0-891B-48A22967A0C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F497C727-9538-4BF0-891B-48A22967A0C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F497C727-9538-4BF0-891B-48A22967A0C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54364D7C-8E37-4A74-A80D-9B532E81D41E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54364D7C-8E37-4A74-A80D-9B532E81D41E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54364D7C-8E37-4A74-A80D-9B532E81D41E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54364D7C-8E37-4A74-A80D-9B532E81D41E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
