@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Hive.NET.Core.Api;
+using Hive.NET.Core.Configuration.Notification;
 using Hive.NET.Core.Configuration.Storage;
 using Hive.NET.Core.Manager;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +19,7 @@ public static class HiveBootstrapper
         services.AddSingleton<IHiveManager, HiveManager>();
         services.Configure<HiveSettings>(configuration.GetSection(HiveSectionName));
         services.AddTransient<IHiveStorageProvider, EmptyStorageProvider>();
-        services.AddHostedService<HiveApi>();
+        services.AddTransient<INotificationProvider, EmptyNotificationProvider>();
     }
 
     public static IServiceProvider UseHive(this IServiceProvider serviceProvider)

@@ -39,7 +39,7 @@ public class HiveTests
         var status = hive.GetWorkItemStatus(taskId);
 
         // Assert
-        Assert.Equal(WorkItemStatus.Waiting, status);
+        Assert.Equal(WorkItemStatus.Waiting, status.Status);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class HiveTests
         var status = hive.GetWorkItemStatus(nonExistentTaskId);
 
         // Assert
-        Assert.Equal(WorkItemStatus.NotExist, status);
+        Assert.Equal(WorkItemStatus.NotExist, status.Status);
     }
 
     [Fact]

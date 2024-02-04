@@ -23,8 +23,8 @@ public class BeeWorkItem
     }
 
     public Task task { get; }
-    public Action onSuccess { get; }
-    public Action<Exception> onFailure { get; }
+    public Action onSuccess { get; internal set; }
+    public Action<Exception> onFailure { get; internal set; }
     public Guid Id { get; set; }
     public string? Description { get; set; }
     public BeeWorkItem? NextTask { get; private set; }

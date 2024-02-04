@@ -1,16 +1,10 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Hive.NET.Core.Configuration;
 using Hive.NET.Core.Manager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Hive.NET.Core.Api
+namespace Hive.NET.Extensions.Api
 {
     public class HiveApi : IHostedService
     {

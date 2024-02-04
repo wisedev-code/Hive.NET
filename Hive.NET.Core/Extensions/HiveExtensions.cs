@@ -14,7 +14,7 @@ public static class HiveExtensions
         var taskId = recurringTask.Id;
         // Schedule the initial execution
         var nextExecutionTime = DateTime.UtcNow.Add(interval);
-        hive.Statuses.TryAdd(taskId, (WorkItemStatus.Waiting, nextExecutionTime));
+        hive.Statuses.TryAdd(taskId, (WorkItemStatus.Waiting, nextExecutionTime, 2));
         
         // Create a timer for the recurring task
         var timer = new System.Timers.Timer();
@@ -39,7 +39,7 @@ public static class HiveExtensions
         var beeWorkItem = workItem.CreateBeeWorkItem();
         beeWorkItem.Id = workItem.Id;
         Bee.BeeFinishedWorkCallback callback = hive.AssignTaskToBee;
-        hive.Statuses[workItem.Id] = new (WorkItemStatus.Running, DateTime.UtcNow);
+        hive.Statuses[workItem.Id] = new (WorkItemStatus.Running, DateTime.UtcNow, currentState.Priority);
         hive.InvokeTaskOnBee(hive.Swarm.FirstOrDefault(x => x.IsWorking == false), beeWorkItem, callback);
     }
 }

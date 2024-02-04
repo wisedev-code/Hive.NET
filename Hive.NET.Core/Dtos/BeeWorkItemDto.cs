@@ -11,4 +11,5 @@ internal class BeeWorkItemDto
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public WorkItemStatus Status { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public int Priority { get; set; }
 }

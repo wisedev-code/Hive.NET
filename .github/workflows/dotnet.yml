@@ -51,6 +51,9 @@ jobs:
       - name: Build NuGet Persistance
         run: dotnet pack ./Hive.NET.Persistence/Hive.NET.Persistence.csproj --output .
 
+      - name: Build NuGet Extensions
+        run: dotnet pack ./Hive.NET.Extensions/Hive.NET.Extensions.csproj --output .
+
       - name: Set Api Key
         run: nuget setapikey ${{ secrets.NUGET_SECRET }}
 
