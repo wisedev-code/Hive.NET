@@ -10,7 +10,7 @@
 
     <PropertyGroup>
         <PackageId>HiveNET.Persistence</PackageId>
-        <Version>0.0.3</Version>
+        <Version>0.5.0</Version>
         <Authors>Wisedev, Piotr Świerad</Authors>
         <Company>Wisedev</Company>
         <Description>Scalable task management in .NET with animal reference. - Addition to store status information</Description>
