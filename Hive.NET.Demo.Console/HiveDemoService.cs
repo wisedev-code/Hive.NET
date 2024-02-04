@@ -1,8 +1,9 @@
 ﻿using Hive.NET.Core.Components;
+using Hive.NET.Core.Components.BeeWorkItems;
 using Hive.NET.Core.Factory;
 using Hive.NET.Core.Manager;
 using Microsoft.Extensions.Logging;
-
+using Hive.NET.Core.Extensions;
 namespace Hive.NET.Demo.Console;
 
 public class HiveDemoService
@@ -22,7 +23,8 @@ public class HiveDemoService
         _logger.LogInformation("Select test to run:" + Environment.NewLine +
                                "1 Normal Tasks " + Environment.NewLine +
                                "2 Sequential task" + Environment.NewLine +
-                               "3 Sequential type task");
+                               "3 Sequential type task" + Environment.NewLine +
+                               "4 Recurring type task");
 
         switch (System.Console.ReadLine())
         {
@@ -31,6 +33,8 @@ public class HiveDemoService
             case "2": RunSequentialTasks();
                 break;
             case "3": RunSequenceTypeTasks();
+                break;
+            case "4": RunRecurringTask();
                 break;
         }
     }
@@ -61,6 +65,29 @@ public class HiveDemoService
         }
     }
 
+    private void RunRecurringTask()
+    {
+        var hiveId = HiveFactory.CreateHive(2);
+
+        var hive = _manager.GetHive(hiveId);
+
+        var action = () =>
+        {
+            var delay = new Random().Next(100, 120);
+            Task.Delay(delay).Wait();
+            System.Console.WriteLine($"Task with delay {delay}");
+        };
+
+        var beeTaskReq = new RecurringBeeWorkItem(action, onSuccess: () => System.Console.WriteLine("Finished :)!"));
+        
+        var taskId = hive.AddTask(beeTaskReq, TimeSpan.FromSeconds(5));
+        
+        Task.Delay(TimeSpan.FromSeconds(32)).Wait();
+        hive.TryRemoveTask(taskId);
+        
+        System.Console.ReadLine();
+    }
+    
     private void RunSequentialTasks()
     {
         var hiveId = HiveFactory.CreateHive(2);

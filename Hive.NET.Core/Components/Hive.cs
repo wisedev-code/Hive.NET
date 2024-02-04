@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hive.NET.Core.Api;
+using Hive.NET.Core.Components.BeeWorkItems;
 using Hive.NET.Core.Configuration;
 using Hive.NET.Core.Configuration.Storage;
 using Hive.NET.Core.Models.Enums;
@@ -97,7 +98,7 @@ public class Hive
         return Statuses[id].Status;
     }
     
-    public WorkItemStatus WorkItemStatusTryRemoveTask(Guid id)
+    public WorkItemStatus TryRemoveTask(Guid id)
     {
         if (!Statuses.ContainsKey(id))
         {
@@ -114,7 +115,7 @@ public class Hive
         return (Statuses[id] = new (WorkItemStatus.Removed, DateTime.Now)).Status;
     }
 
-    private async Task AssignTaskToBee(Bee bee)
+    internal async Task AssignTaskToBee(Bee bee)
     {
         Bee.BeeFinishedWorkCallback callback = AssignTaskToBee;
 
@@ -158,7 +159,7 @@ public class Hive
     }
 
 
-    private async Task InvokeTaskOnBee(Bee bee, BeeWorkItem workItem, Bee.BeeFinishedWorkCallback callback)
+    internal async Task InvokeTaskOnBee(Bee bee, BeeWorkItem workItem, Bee.BeeFinishedWorkCallback callback)
     {
         _logger.LogInformation($"Bee {bee.Id} will perform task {workItem.Id}");
         var success = await bee.DoWork(workItem, callback);

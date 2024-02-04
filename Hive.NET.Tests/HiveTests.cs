@@ -66,7 +66,7 @@ public class HiveTests
         var taskId = hive.AddTask(new BeeWorkItem(new Task(() => Task.Delay(100))));
 
         // Act
-        var status = hive.WorkItemStatusTryRemoveTask(taskId);
+        var status = hive.TryRemoveTask(taskId);
 
         // Assert
         Assert.Equal(WorkItemStatus.Removed, status);
@@ -81,7 +81,7 @@ public class HiveTests
         var nonExistentTaskId = Guid.NewGuid();
 
         // Act
-        var status = hive.WorkItemStatusTryRemoveTask(nonExistentTaskId);
+        var status = hive.TryRemoveTask(nonExistentTaskId);
 
         // Assert
         Assert.Equal(WorkItemStatus.NotExist, status);

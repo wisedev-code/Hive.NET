@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Hive.NET.Core.Components;
+namespace Hive.NET.Core.Components.BeeWorkItems;
 
 public class BeeWorkItemsSequence
 {

@@ -1,4 +1,5 @@
 ﻿using Hive.NET.Core.Components;
+using Hive.NET.Core.Components.BeeWorkItems;
 
 namespace Hive.NET.Tests;
 
