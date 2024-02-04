@@ -10,4 +10,5 @@ internal class HiveDetailsDto
     public string Name { get; set; }
     public List<BeeWorkItemDto> WorkItems { get; set; }
     public List<BeeDto> Swarm { get; set; }
+    public bool Archived { get; set; }
 }

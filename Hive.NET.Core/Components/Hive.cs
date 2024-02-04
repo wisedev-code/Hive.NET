@@ -19,7 +19,8 @@ public class Hive
     public Guid Id { get; init; }
     internal string _name;
     internal List<Bee> Swarm = new();
-    private ConcurrentQueue<BeeWorkItem> Tasks = new();
+    internal bool IsArchived;
+    private ConcurrentQueue<BeeWorkItem> _tasks = new();
     internal List<BeeWorkItem> Items = new();
     internal ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt)> Statuses = new();
 
@@ -48,6 +49,7 @@ public class Hive
         }
 
         _hiveStorageProvider = ServiceLocator.GetService<IHiveStorageProvider>();
+        IsArchived = false;
     }
 
     public Guid AddTask(BeeWorkItem task)
@@ -55,7 +57,7 @@ public class Hive
         var taskId = Guid.NewGuid();
         Statuses.TryAdd(taskId, (WorkItemStatus.Waiting, DateTime.UtcNow));
         task.Id = taskId;
-        Tasks.Enqueue(task);
+        _tasks.Enqueue(task);
         Items.Add(task);
         AssignTaskToRandomBee();
         
@@ -81,7 +83,7 @@ public class Hive
         
         Statuses.TryAdd(firstInSequence.Id, (WorkItemStatus.Waiting, DateTime.UtcNow));
         task.Id = firstInSequence.Id;
-        Tasks.Enqueue(firstInSequence);
+        _tasks.Enqueue(firstInSequence);
         Items.Add(firstInSequence);
         AssignTaskToRandomBee();
         
@@ -115,11 +117,19 @@ public class Hive
         return (Statuses[id] = new (WorkItemStatus.Removed, DateTime.Now)).Status;
     }
 
+    public void Sudoku()
+    {
+        _tasks.Clear();
+        Items.Clear();
+        Swarm.Clear();
+        IsArchived = true;
+    }
+
     internal async Task AssignTaskToBee(Bee bee)
     {
         Bee.BeeFinishedWorkCallback callback = AssignTaskToBee;
 
-        if (Tasks.TryDequeue(out var task))
+        if (_tasks.TryDequeue(out var task))
         {
             var state = GetWorkItemStatus(task.Id);
             if (state == WorkItemStatus.Removed)
@@ -146,7 +156,7 @@ public class Hive
         }
         
         _logger.LogDebug($"Task assigned to bee: {bee.Id}");
-        if (Tasks.TryDequeue(out var task))
+        if (_tasks.TryDequeue(out var task))
         {
             var state = GetWorkItemStatus(task.Id);
             if (state == WorkItemStatus.Removed)
@@ -177,6 +187,7 @@ public class Hive
         {
             Id = Id,
             Name = _name,
+            Archived = IsArchived,
             Bees = Swarm.Select(x => new BeeDto
             {
                 Id = x.Id,
@@ -189,6 +200,7 @@ public class Hive
         {
             Id = Id,
             Name = _name,
+            Archived = IsArchived,
             Swarm = Swarm.Select(x => new BeeDto()
             {
                 Id = x.Id,
