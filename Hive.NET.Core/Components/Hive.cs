@@ -21,6 +21,8 @@ public class Hive
     internal string _name;
     internal List<Bee> Swarm = new();
     internal ConcurrentQueue<BeeWorkItem> Tasks = new();
+    internal bool IsArchived;
+    private ConcurrentQueue<BeeWorkItem> _tasks = new();
     internal List<BeeWorkItem> Items = new();
     internal ConcurrentDictionary<Guid, (WorkItemStatus Status, DateTime UpdatedAt, int Priority)> Statuses = new();
 
@@ -51,6 +53,7 @@ public class Hive
 
         _hiveStorageProvider = ServiceLocator.GetService<IHiveStorageProvider>();
         _notificationProvider = ServiceLocator.GetService<INotificationProvider>();
+        IsArchived = false;
     }
 
     public Guid AddTask(BeeWorkItem task)
@@ -90,7 +93,7 @@ public class Hive
         
         Statuses.TryAdd(firstInSequence.Id, (WorkItemStatus.Waiting, DateTime.UtcNow, (int)BeeWorkItemPriority.Medium));
         task.Id = firstInSequence.Id;
-        Tasks.Enqueue(firstInSequence);
+        _tasks.Enqueue(firstInSequence);
         Items.Add(firstInSequence);
         AssignTaskToRandomBee();
         
@@ -122,6 +125,14 @@ public class Hive
 
         _logger.LogDebug($"Task {id} is removed from queue");
         return (Statuses[id] = new (WorkItemStatus.Removed, DateTime.Now, (int)BeeWorkItemPriority.Medium)).Status;
+    }
+
+    public void Sudoku()
+    {
+        _tasks.Clear();
+        Items.Clear();
+        Swarm.Clear();
+        IsArchived = true;
     }
 
     internal async Task AssignTaskToBee(Bee bee)
@@ -195,6 +206,7 @@ public class Hive
         {
             Id = Id,
             Name = _name,
+            Archived = IsArchived,
             Bees = Swarm.Select(x => new BeeDto
             {
                 Id = x.Id,
@@ -207,6 +219,7 @@ public class Hive
         {
             Id = Id,
             Name = _name,
+            Archived = IsArchived,
             Swarm = Swarm.Select(x => new BeeDto()
             {
                 Id = x.Id,
