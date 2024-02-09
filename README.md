@@ -24,6 +24,14 @@ or via nuget package manager console:
 
 > Install-Package HiveNET.Core
 
+
+(Please checkout additional packages)
+- `HiveNET.Persistence`
+- `HiveNET.Extensions`
+
+More details can be found in documentation and examples
+
+
 To check newest updates and additional information please check direct link:
 https://www.nuget.org/packages/Hive.NET
 
@@ -79,9 +87,9 @@ With this approach now when we start our demo app, with swarn size 2 and simple 
 
 ## Docs
 
-We are not there yet :) 
+Discover how our comprehensive hive management system can optimize task management and streamline operations. Dive into the documentation below to explore its full potential.
 
-<img  height="200" width="200" style="padding: 25pt" src="https://cdn-icons-png.flaticon.com/512/5229/5229377.png"/>
+[Documentation](/Docs/_index.md)
 
 ## Why the name Hive?
     
