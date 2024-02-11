@@ -1,7 +1,12 @@
+using Hive.NET.Core.Components;
+using Hive.NET.Core.Extensions;
+using Hive.NET.Core.Manager;
 using Hive.NET.Demo.Api.EntityModel;
 using Hive.NET.Demo.Api.Repositories.Interfaces;
 using Hive.NET.Demo.Api.RequestModel;
+using Hive.NET.Demo.Api.Services;
 using Hive.NET.Demo.Api.Services.Interfaces;
+using Hive.NET.Extensions.Components;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -17,14 +22,16 @@ namespace Hive.NET.Demo.Api.Controllers
         private readonly IOrderRepository _orderRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly IOrderUpdateService _orderUpdateService;
+        private readonly IHiveManager _hiveManager;
 
         public OrderController(ILogger<OrderController> logger, IOrderRepository orderRepository,
-            ICustomerRepository customerRepository, IOrderUpdateService orderUpdateService)
+            ICustomerRepository customerRepository, IOrderUpdateService orderUpdateService, IHiveManager hiveManager)
         {
             _logger = logger;
             _orderRepository = orderRepository;
             _customerRepository = customerRepository;
             _orderUpdateService = orderUpdateService;
+            _hiveManager = hiveManager;
         }
 
         // GET: api/Order
@@ -53,15 +60,27 @@ namespace Hive.NET.Demo.Api.Controllers
         public IActionResult Post([FromBody] OrderCreateRequest value)
         {
             _logger.LogInformation($"Create order {value.Number} invoked");
-            var customer = _customerRepository.Get(value.CustomerId);
-            Order order = new Order(value.Number, customer, value.Product, value.Price);
-            customer.OrderCount++;
-            _orderRepository.Save(order);
-            _customerRepository.Update(customer);
+            var workItem = new BeeWorkItem(
+                new Task(
+                    () =>
+                    {
+                        var customer = _customerRepository.Get(value.CustomerId);
+                        Order order = new Order(value.Number, customer, value.Product, value.Price);
+                        customer.OrderCount++;
+                        _orderRepository.Save(order);
+                        _customerRepository.Update(customer);
             
-            _orderUpdateService.ProcessOrder(order);
+                        _orderUpdateService.ProcessOrder(order);
+                    }),
+                "Add order with number " + value.Number,
+                () => _logger.LogInformation($"Order with number {value.Number} added"),
+                _ => _logger.LogError($"Order with number {value.Number} failed to save"));
+
+            _hiveManager
+                .GetHive(Keys.OrderHiveName)!
+                .AddTask(workItem);
             
-            return NoContent();
+            return Accepted();
         }
 
         // PUT: api/Order/8d35a21b-2b53-4407-8959-75910582af36
@@ -72,10 +91,22 @@ namespace Hive.NET.Demo.Api.Controllers
             _logger.LogInformation($"Update order {id} invoked");
             var order = _orderRepository.Get(id);
 
-            order.Price = value.Price;
-            order.Product = value.Product;
+            var workItem = new BeeWorkItem(
+                new Task(
+                    () =>
+                    {
+                        order.Price = value.Price;
+                        order.Product = value.Product;
+                        _orderRepository.Update(order);
+                    }),
+                "Update order with id " + id,
+                () => _logger.LogInformation($"Order with id {id} updated"),
+                _ => _logger.LogError($"Order with id {id} failed to update"));
 
-            _orderRepository.Update(order);
+            _hiveManager
+                .GetHive(Keys.OrderHiveName)!
+                .AddTaskWithPriority(workItem, BeeWorkItemPriority.High);
+            
             return Ok(order);
         }
 
@@ -85,7 +116,21 @@ namespace Hive.NET.Demo.Api.Controllers
         public IActionResult Delete(Guid id)
         {
             _logger.LogInformation($"Delete order {id} invoked");
-            _orderRepository.Delete(id);
+            
+            var workItem = new BeeWorkItem(
+                new Task(
+                    () =>
+                    {
+                        _orderRepository.Delete(id);
+                    }),
+                "Delete order with id " + id,
+                () => _logger.LogInformation($"Order with id {id} deleted"),
+                _ => _logger.LogError($"Order with id {id} failed to delete"));
+
+            _hiveManager
+                .GetHive(Keys.OrderHiveName)!
+                .AddTask(workItem);
+            
             return NoContent();
         }
     }

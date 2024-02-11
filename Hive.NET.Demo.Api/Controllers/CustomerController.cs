@@ -1,6 +1,9 @@
+using Hive.NET.Core.Components;
+using Hive.NET.Core.Manager;
 using Hive.NET.Demo.Api.EntityModel;
 using Hive.NET.Demo.Api.Repositories.Interfaces;
 using Hive.NET.Demo.Api.RequestModel;
+using Hive.NET.Extensions.Components;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -14,11 +17,16 @@ namespace Hive.NET.Demo.Api.Controllers
     {
         private readonly ICustomerRepository _customerRepository;
         private readonly ILogger<OrderController> _logger;
+        private readonly IHiveManager _hiveManager;
 
-        public CustomerController(ICustomerRepository customerRepository, ILogger<OrderController> logger)
+        public CustomerController(
+            ICustomerRepository customerRepository, 
+            ILogger<OrderController> logger, 
+            IHiveManager hiveManager)
         {
             _customerRepository = customerRepository;
             _logger = logger;
+            _hiveManager = hiveManager;
         }
 
         // GET: api/Customer
@@ -47,8 +55,21 @@ namespace Hive.NET.Demo.Api.Controllers
         public IActionResult Post([FromBody] CustomerCreateRequest customerCreateRequest)
         {
             _logger.LogInformation($"Create customer {customerCreateRequest.FirstName} | {customerCreateRequest.LastName} invoked");
-            var customer = new Customer(customerCreateRequest.FirstName, customerCreateRequest.LastName);
-            _customerRepository.Save(customer);
+            
+            var workItem = new BeeWorkItem(
+                new Task(() =>
+                {
+                    var customer = new Customer(customerCreateRequest.FirstName, customerCreateRequest.LastName);
+                    _customerRepository.Save(customer);
+                }),
+                "Create customer task",
+                () => _logger.LogInformation($"Create customer {customerCreateRequest.FirstName}|{customerCreateRequest.LastName} task completed", 
+                    () => _logger.LogError($"Create customer {customerCreateRequest.FirstName}|{customerCreateRequest.LastName} task failed")));
+
+            _hiveManager
+                .GetHive(Keys.CustomerHiveName)!
+                .AddTask(workItem);
+          
             return NoContent();
         }
 
@@ -59,23 +80,29 @@ namespace Hive.NET.Demo.Api.Controllers
         {
             _logger.LogInformation($"Update customer {id} invoked");
             var customer = _customerRepository.Get(id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
 
-            if (customerDiscount.CanHaveDiscount && customer.DiscountAvailable)
-            {
-                customer.GiveDiscount(customerDiscount.Discount);
-            }
-            else
-            {
-                customer.RemoveDiscount();
-            }
+            var workItem = new BeeWorkItem(
+                new Task(() =>
+                {
+                    if (customerDiscount.CanHaveDiscount && customer.DiscountAvailable)
+                    {
+                        customer.GiveDiscount(customerDiscount.Discount);
+                    }
+                    else
+                    {
+                        customer.RemoveDiscount();
+                    }
+                    _customerRepository.Update(customer);
+                }),
+                "Update customer task",
+                () => _logger.LogInformation($"Update customer {id} task completed", 
+                    () => _logger.LogError($"Update customer {id} task failed")));
 
-            _customerRepository.Update(customer);
+            _hiveManager
+                .GetHive(Keys.CustomerHiveName)!
+                .AddTaskWithPriority(workItem, BeeWorkItemPriority.High);
 
-            return Ok(customer);
+            return Accepted(customer);
         }
 
         // DELETE: api/Customer/8d35a21b-2b53-4407-8959-75910582af36
@@ -83,7 +110,19 @@ namespace Hive.NET.Demo.Api.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            _customerRepository.Delete(id);
+            var workItem = new BeeWorkItem(
+                new Task(() =>
+                {
+                    _customerRepository.Delete(id);
+                }),
+                "Delete customer task",
+                () => _logger.LogInformation($"Delete customer {id} task completed", 
+                    () => _logger.LogError($"Delete customer {id} task failed")));
+            
+            _hiveManager
+                .GetHive(Keys.CustomerHiveName)!
+                .AddTask(workItem);
+            
             return NoContent();
         }
     }
