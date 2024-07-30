@@ -1,0 +1,154 @@
+﻿@page "/Customers"
+@using Hive.NET.Demo.Api.EntityModel
+@using Hive.NET.Demo.Api.RequestModel
+@inject HiveApiClient _hiveApiClient
+<link href="app.css" rel="stylesheet"/>
+<h3>Customers</h3>
+
+@if (_customers == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr class="text-center">
+            <th>
+                <label>First Name</label>
+            </th>
+            <th>
+                <label>Last Name</label>
+            </th>
+            <th>
+                <label>Discount available</label>
+            </th>
+            <th>
+                <label>Discount percentage</label>
+            </th>
+            <th>
+                <label>Order count</label>
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var customer in _customers)
+        {
+            <tr>
+                <td class="text-center">@customer.FirstName</td>
+                <td class="text-center">@customer.LastName</td>
+                <td class="text-center">
+                    @if (customer.DiscountAvailable)
+                    {
+                        <span>✔</span>
+                    }
+                </td>
+                <td class="text-center">@customer.DiscountPercentage%</td>
+                <td class="text-center">@customer.OrderCount</td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-warning" @onclick="() => OpenAddDiscountModal(customer.Id)">Add Discount</button>
+                        <button class="btn btn-primary" @onclick="() => OpenAddOrderModal(customer.Id)">Add New Order</button>
+                    </div>
+                </td>
+            </tr>
+        }
+        <tr id="addRow">
+            <td class="text-center">
+                <input @bind="_customerCreateRequest.FirstName" placeholder="First Name"/>
+            </td>
+            <td class="text-center">
+                <input @bind="_customerCreateRequest.LastName" placeholder="Last Name"/>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="text-center">
+                <button class="btn btn-success" @onclick="AddCustomer">Add</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <Modal Show="@showAddOrderModal" OnClose="@CloseAddOrderModal">
+        <AddNewOrder CustomerId="@_customerId" OnAdd="@HandleAddOrder"/>
+    </Modal>
+
+    <Modal Show="@showAddDiscountModal" OnClose="@CloseAddDiscountModal">
+        <AddDiscount CustomerId="@_customerId" OnAdd="@HandleAddDiscount"/>
+    </Modal>
+}
+
+@code {
+    private List<Customer>? _customers;
+    private CustomerCreateRequest? _customerCreateRequest = new();
+    private PersistingComponentStateSubscription persistingSubscription;
+    private bool showAddOrderModal = false;
+    private bool showAddDiscountModal = false;
+    private Guid? _customerId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCustomers();
+    }
+
+    private async Task GetCustomers()
+    {
+        _customers = await _hiveApiClient.GetCustomers();
+    }
+
+    private async Task AddCustomer()
+    {
+        if (!string.IsNullOrEmpty(_customerCreateRequest.FirstName) || !string.IsNullOrEmpty(_customerCreateRequest.LastName))
+        {
+            await _hiveApiClient.PostCustomer(_customerCreateRequest);
+            await GetCustomers();
+            _customerCreateRequest.FirstName = string.Empty;
+            _customerCreateRequest.LastName = string.Empty;
+        }
+    }
+
+    private void OpenAddDiscountModal(Guid customerId)
+    {
+        showAddDiscountModal = true;
+        _customerId = customerId;
+        StateHasChanged();
+    }
+
+    private void CloseAddDiscountModal()
+    {
+        showAddDiscountModal = false;
+        _customerId = null;
+        StateHasChanged();
+    }
+
+    private void OpenAddOrderModal(Guid customerId)
+    {
+        showAddOrderModal = true;
+        _customerId = customerId;
+        StateHasChanged();
+    }
+
+    private void CloseAddOrderModal()
+    {
+        showAddOrderModal = false;
+        _customerId = null;
+        StateHasChanged();
+    }
+
+    private async Task HandleAddOrder(OrderCreateRequest newItem)
+    {
+        CloseAddOrderModal();
+        await GetCustomers();
+        StateHasChanged();
+    }
+
+    private async Task HandleAddDiscount(CustomerDiscountRequest discountRequest)
+    {
+        CloseAddDiscountModal();
+        await GetCustomers();
+        StateHasChanged();
+    }
+
+}

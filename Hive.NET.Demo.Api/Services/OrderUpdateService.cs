@@ -14,7 +14,7 @@ namespace Hive.NET.Demo.Api.Services
         {
             this.logger = logger;
         }
-        
+
         public void Initialize(IOrderRepository orderRepository)
         {
             _orderRepository = orderRepository;
@@ -26,10 +26,12 @@ namespace Hive.NET.Demo.Api.Services
             {
                 order.Status = OrderStatus.Verified;
             }
-            
+
             if (order.Customer.DiscountAvailable && order.Customer.DiscountPercentage > 0)
             {
-                order.Price = order.Price * order.Customer.DiscountPercentage / 100;
+                var discount = 1 - (order.Customer.DiscountPercentage / 100m);
+
+                order.Price *= discount;
             }
         }
     }

@@ -24,6 +24,8 @@ builder.Services.AddHiveApi();
 builder.Services.AddHiveSignalR();
 builder.Services.IncludeHiveFileStorage("./hives.json");
 
+builder.Services.AddHostedService<DataSeedService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,4 +47,3 @@ HiveFactory.CreateHive(5, Keys.OrderHiveName);
 
 
 app.Run();
-

@@ -1,0 +1,31 @@
+﻿@if (Show)
+{
+    <div class="modal-backdrop" @onclick="Close"></div>
+    <div class="modal-container">
+        <div class="modal-content">
+            <h2>@Title</h2>
+            <button class="close-button" @onclick="Close">&times;</button>
+            @if (ChildContent != null)
+            {
+                @ChildContent
+            }
+            else
+            {
+                <p>No content provided</p>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Show { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private Task Close()
+    {
+        return OnClose.InvokeAsync();
+    }
+
+}

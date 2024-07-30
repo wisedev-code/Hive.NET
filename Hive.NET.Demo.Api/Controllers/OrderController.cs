@@ -67,9 +67,13 @@ namespace Hive.NET.Demo.Api.Controllers
                         var customer = _customerRepository.Get(value.CustomerId);
                         Order order = new Order(value.Number, customer, value.Product, value.Price);
                         customer.OrderCount++;
+
+                        if (customer.OrderCount >= 10 && !customer.DiscountAvailable)
+                            customer.DiscountAvailable = true;
+
                         _orderRepository.Save(order);
                         _customerRepository.Update(customer);
-            
+
                         _orderUpdateService.ProcessOrder(order);
                     }),
                 "Add order with number " + value.Number,
@@ -79,7 +83,7 @@ namespace Hive.NET.Demo.Api.Controllers
             _hiveManager
                 .GetHive(Keys.OrderHiveName)!
                 .AddTask(workItem);
-            
+
             return Accepted();
         }
 
@@ -106,7 +110,7 @@ namespace Hive.NET.Demo.Api.Controllers
             _hiveManager
                 .GetHive(Keys.OrderHiveName)!
                 .AddTaskWithPriority(workItem, BeeWorkItemPriority.High);
-            
+
             return Ok(order);
         }
 
@@ -116,7 +120,7 @@ namespace Hive.NET.Demo.Api.Controllers
         public IActionResult Delete(Guid id)
         {
             _logger.LogInformation($"Delete order {id} invoked");
-            
+
             var workItem = new BeeWorkItem(
                 new Task(
                     () =>
@@ -130,7 +134,7 @@ namespace Hive.NET.Demo.Api.Controllers
             _hiveManager
                 .GetHive(Keys.OrderHiveName)!
                 .AddTask(workItem);
-            
+
             return NoContent();
         }
     }

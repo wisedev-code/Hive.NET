@@ -1,0 +1,76 @@
+﻿@page "/Orders"
+@using Hive.NET.Demo.Api.EntityModel
+@inject HiveApiClient _hiveApiClient
+<h3>Orders</h3>
+
+@if (_orders == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr class="text-center">
+            <th>
+                <label>First Name</label>
+            </th>
+            <th>
+                <label>Last Name</label>
+            </th>
+            <th>
+                <label>Order number</label>
+            </th>
+            <th>
+                <label>Product</label>
+            </th>
+            <th>
+                <label>Price</label>
+            </th>
+            <th>
+                <label>Status</label>
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var order in _orders)
+        {
+            <tr>
+                <td class="text-center">@order.Customer.FirstName</td>
+                <td class="text-center">@order.Customer.LastName</td>
+                <td class="text-center">@order.Number</td>
+                <td class="text-center">@order.Product</td>
+                <td class="text-center">@order.Price</td>
+                <td class="text-center">@order.Status</td>
+                <td>
+                    <button class="btn btn-danger" @onclick="() => DeleteOrder(order.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Order>? _orders;
+    private PersistingComponentStateSubscription persistingSubscription;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetOrders();
+    }
+
+    private async Task GetOrders()
+    {
+        _orders = await _hiveApiClient.GetOrders();
+    }
+
+    private async Task DeleteOrder(Guid orderId)
+    {
+        await _hiveApiClient.DeleteOrder(orderId);
+        await GetOrders();
+        StateHasChanged();
+    }
+
+}

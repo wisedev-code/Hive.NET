@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Extensions", "Hive
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Demo.Api", "Hive.NET.Demo.Api\Hive.NET.Demo.Api.csproj", "{26E915D5-FB7A-4C77-92D6-D1CD67847D1A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hive.NET.Demo.FE", "Hive.NET.Demo.FE\Hive.NET.Demo.FE.csproj", "{C9032F8F-0619-4144-BCA1-95E60DFD524F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,5 +53,9 @@ Global
 		{26E915D5-FB7A-4C77-92D6-D1CD67847D1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26E915D5-FB7A-4C77-92D6-D1CD67847D1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26E915D5-FB7A-4C77-92D6-D1CD67847D1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9032F8F-0619-4144-BCA1-95E60DFD524F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9032F8F-0619-4144-BCA1-95E60DFD524F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9032F8F-0619-4144-BCA1-95E60DFD524F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9032F8F-0619-4144-BCA1-95E60DFD524F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
