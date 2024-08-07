@@ -1,0 +1,49 @@
+﻿@using Hive.NET.Demo.Api.EntityModel
+@using Hive.NET.Demo.Api.RequestModel
+@inject HiveApiClient HiveApiClient
+
+<EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <div class="p-2">
+        <h3>Add new order</h3>
+    </div>
+    <div class="form-group p-2">
+        <label>Number:</label>
+        <InputText class="form-control" id="number" @bind-Value="model.Number"/>
+    </div>
+    <div class="form-group p-2">
+        <label>Product:</label>
+        <InputText class="form-control" id="product" @bind-Value="model.Product"/>
+    </div>
+    <div class="form-group p-2">
+        <label>Price:</label>
+        <InputNumber class="form-control" id="price" @bind-Value="model.Price"/>
+    </div>
+    <div class="p-2">
+        <button class="btn btn-primary" type="submit">Add</button>
+    </div>
+</EditForm>
+
+@code {
+    private OrderCreateRequest model = new OrderCreateRequest();
+
+    [Parameter] public Guid? CustomerId { get; set; }
+    [Parameter] public EventCallback<OrderCreateRequest> OnAdd { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        model.CustomerId = CustomerId ?? throw new Exception("Invalid customer id");
+        Console.WriteLine("Form submitted");
+        await OnAdd.InvokeAsync(model);
+        await HiveApiClient.PostOrder(model);
+        model = new OrderCreateRequest();
+    }
+
+}
